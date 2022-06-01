@@ -1,0 +1,282 @@
+import pathlib
+import logging as log
+
+
+class RUNTIME_MODE:
+    DOCKER = "DOCKER"
+    CLI = "CLI"
+
+
+class REQUEST_METHOD:
+    GET = "GET"
+    POST = "POST"
+    PUT = "PUT"
+    DELETE = "DELETE"
+
+
+# VMRay API Key types enum
+class VMRAY_API_KEY_TYPE:
+    REPORT = 0
+    VERDICT = 1
+
+
+# VMRay verdicts enum
+class VERDICT:
+    SUSPICIOUS = "suspicious"
+    MALICIOUS = "malicious"
+
+
+# VMRay job status
+class JOB_STATUS:
+    QUEUED = "queued"
+    INWORK = "inwork"
+
+
+# VMRay Configuration
+class VMRayConfig:
+    # VMRay API Key type setting
+    API_KEY_TYPE = VMRAY_API_KEY_TYPE.REPORT
+
+    # VMRay Report or Verdict API KEY
+    API_KEY = ""
+
+    # VMRay REST API URL
+    URL = "https://eu.cloud.vmray.com"
+
+    # SSL Verification setting for self-signed certificates
+    SSL_VERIFY = True
+
+    # VMRay Submission Comment
+    SUBMISSION_COMMENT = "Sample from VMRay Analyzer - SentinelOne Connector"
+
+    # VMRay submission tags (Can't contain space)
+    SUBMISSION_TAGS = ["SentinelOne"]
+
+    # Append custom tag to VMRay submission tags
+    SEND_CUSTOM_SUBMISSION_TAGS = False
+
+    # VMRay analysis timeout value (seconds)
+    ANALYSIS_TIMEOUT = 120
+
+    # VMRay analysis job timeout for wait_submissions
+    ANALYSIS_JOB_TIMEOUT = 900
+
+    # Connector Name
+    CONNECTOR_NAME = "SentinelOne"
+
+
+# Sample Types
+class SAMPLE_TYPE:
+    THREAT = 'threat'
+    PROCESS = 'process'
+
+
+# SentinelOne Activity Types
+class ACTIVITY_TYPE:
+    AGENT_UPLOADED_FETCHED_FILES = 80
+    AGENT_UPLOADED_THREAT_FILE = 86
+
+
+# SentinelOne Mitigation Types
+class MITIGATION_TYPE:
+    KILL = "kill"
+    QUARANTINE = "quarantine"
+
+
+# SentinelOne Site Properties for Custom Tag
+class SITE_PROPERTIES:
+    SITE_ID = "siteId"
+    SITE_NAME = "siteName"
+
+
+# SentinelOne Configuration
+class SentinelOneConfig:
+    # Alert polling time span as seconds
+    TIME_SPAN = 3600
+
+    # Used for filter by account id
+    # "" => for first or default account
+    # example: "1236876387553034321"
+    ACCOUNT_ID = ""
+
+    # Used for filter by site id
+    # [] => for all
+    # example: ["1116876387561422222", "2224027517108671444"]
+    SITE_IDS = []
+
+    # Used for zip file password
+    ZIP_PASSWORD = "SentinelEvidenceFile.!"
+
+    # Custom Tag Property for VMRay Submission
+    SUBMISSION_CUSTOM_TAG_PROPERTY = SITE_PROPERTIES.SITE_ID
+
+    # API related configurations
+    class API:
+        # SentinelOne API, API Token
+        # Used for programmatic API accesses
+        # To learn more about temporary and 6-month tokens and how to generate them,
+        # see https://support.sentinelone.com/hc/en-us/articles/360004195934.
+        API_TOKEN = ""
+
+        # Hostname to access SentinelOne
+        HOSTNAME_URL = "https://usea1-partners.sentinelone.net"
+
+        # Api Prefix to generate URL for SentinelOne API
+        API_PREFIX = "web/api/v2.1"
+
+        # URL to access SentinelOne for Endpoint API
+        URL = "%s/%s" % (HOSTNAME_URL, API_PREFIX)
+
+        # Authentication Url to authenticate SentinelOne
+        AUTH_URL = "%s/users/login/by-api-token" % URL
+
+        # User-Agent value to use for SentinelOne for Endpoint API
+        USER_AGENT = "VMRay-VMRayAnalyzer/4.4.1"
+
+        # Max data count per request
+        # Max limit = 1.000
+        MAX_DATA_COUNT = 1000
+
+        # Fetch file timeout (seconds)
+        FETCH_FILE_TIMEOUT = 60
+
+        # Time span between request iteration (seconds)
+        FETCH_FILE_TIME_SPAN = 10
+
+    # Download related configurations
+    class DOWNLOAD:
+        # Download directory name
+        DIR = pathlib.Path("downloads")
+
+        # Download directory path
+        ABSOLUTE_PATH = pathlib.Path(__file__).parent.parent.resolve() / DIR
+
+    # Process related configurations
+    class PROCESS:
+        # Process filter query
+        FILTER_QUERY = 'ObjectType = "Process"'
+
+    # Indicator related configurations
+    # https://usea1-partners.sentinelone.net/docs/en/indicators.html
+    class INDICATOR:
+        # Title for indicators which created by connector
+        NAME = "Indicator based on VMRay Analyzer Report"
+
+        # Description for indicators which created by connector
+        DESCRIPTION = "Indicator based on VMRay Analyzer Report"
+
+        # Source for indicators which created by connector
+        SOURCE = "VMRay"
+
+    # Blacklist related configurations
+    class BLACKLIST:
+        # Add blacklist processes with SHA1 hash values
+        class AUTO_ADD_GLOBAL:
+            # Automated add blacklist processes with SHA1 hash values
+            ACTIVE = False
+
+            # Selected verdicts to blacklist processes automatically
+            VERDICTS = [VERDICT.SUSPICIOUS, VERDICT.MALICIOUS]
+
+            # Description for indicators which created by connector
+            DESCRIPTION = "Reported from VMRay Analyzer"
+
+        # Add blacklist processes with SHA1 hash values for threats
+        class AUTO_ADD_THREAT:
+            # Automated add blacklist processes with SHA1 hash values for threats
+            ACTIVE = False
+
+            # Selected verdicts to blacklist processes automatically for threats
+            VERDICTS = [VERDICT.SUSPICIOUS, VERDICT.MALICIOUS]
+
+            # Description for indicators which created by connector
+            DESCRIPTION = "Reported from VMRay Analyzer"
+
+        # Add blacklist processes with deep visibility
+        class AUTO_ADD_WITH_DV:
+            # Automated add blacklist processes with deep visibility
+            ACTIVE = False
+
+            # Selected verdicts to blacklist processes automatically with deep visibility
+            VERDICTS = [VERDICT.SUSPICIOUS, VERDICT.MALICIOUS]
+
+    # Endpoint Action related configurations
+    class ACTION:
+        # Threat kill to process
+        class AUTO_KILL:
+            # Automated threat kill to process status
+            ACTIVE = False
+
+            # Selected verdicts to kill threat process automatically
+            VERDICTS = [VERDICT.SUSPICIOUS, VERDICT.MALICIOUS]
+
+        # Threat add to quarantine
+        class AUTO_QUARANTINE:
+            # Automated threat add to quarantine
+            ACTIVE = False
+
+            # Selected verdicts to quarantine process automatically
+            VERDICTS = [VERDICT.SUSPICIOUS, VERDICT.MALICIOUS]
+
+        # Machine disk scan related configuration
+        class AUTO_INITIATE_SCAN:
+            # Automated machine disk scan status
+            ACTIVE = False
+
+            # Selected verdicts to disk scan to machine automatically
+            VERDICTS = [VERDICT.SUSPICIOUS, VERDICT.MALICIOUS]
+
+        # Machine disconnect from network related configuration
+        class AUTO_DISCONNECT:
+            # Automated machine disconnect from network status
+            ACTIVE = False
+
+            # Selected verdicts to machine disconnect from network automatically
+            VERDICTS = [VERDICT.SUSPICIOUS, VERDICT.MALICIOUS]
+
+        # Machine shutdown related configuration
+        class AUTO_SHUTDOWN:
+            # Automated machine shutdown status
+            ACTIVE = False
+
+            # Selected verdicts to machine shutdown automatically
+            VERDICTS = [VERDICT.SUSPICIOUS, VERDICT.MALICIOUS]
+
+
+# General Configuration
+class GeneralConfig:
+    # Log directory
+    LOG_DIR = pathlib.Path("log")
+
+    # Log file path
+    LOG_FILE_PATH = LOG_DIR / pathlib.Path("sentinelone-connector.log")
+
+    # Log verbosity level
+    LOG_LEVEL = log.INFO
+
+    # Selected verdicts for processing
+    SELECTED_VERDICTS = [VERDICT.SUSPICIOUS, VERDICT.MALICIOUS]
+
+    # Time span between script iterations
+    TIME_SPAN = 300
+
+    # Runtime mode for script
+    # If selected as CLI, script works only once, you need to create cron job for continuous processing
+    # If selected as DOCKER, scripts works continuously with TIME_SPAN above
+    RUNTIME_MODE = RUNTIME_MODE.DOCKER
+
+
+# VMRay Analyzer and SentinelOne indicator field mappings
+# You can enable or disable IOC values with comments
+# https://usea1-partners.sentinelone.net/docs/en/indicators.html
+IOC_FIELD_MAPPINGS = {
+    "ipv4": ["IPV4"],
+
+    "sha256": ["SHA256"],
+
+    "domain": ["DNS"],
+
+    "sha1": ["SHA1"],
+
+    "md5": ["MD5"],
+}
