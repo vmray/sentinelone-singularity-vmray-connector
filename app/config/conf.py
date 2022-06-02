@@ -160,10 +160,10 @@ class SentinelOneConfig:
     # https://usea1-partners.sentinelone.net/docs/en/indicators.html
     class INDICATOR:
         # Title for indicators which created by connector
-        NAME = "Indicator based on VMRay Analyzer Report"
+        NAME = "Indicator based on a VMRay Analyzer Report"
 
         # Description for indicators which created by connector
-        DESCRIPTION = "Indicator based on VMRay Analyzer Report"
+        DESCRIPTION = "Indicator based on a VMRay Analyzer Report"
 
         # Source for indicators which created by connector
         SOURCE = "VMRay"
@@ -176,7 +176,7 @@ class SentinelOneConfig:
             ACTIVE = False
 
             # Selected verdicts to blacklist processes automatically
-            VERDICTS = [VERDICT.SUSPICIOUS, VERDICT.MALICIOUS]
+            VERDICTS = [VERDICT.MALICIOUS]
 
             # Description for indicators which created by connector
             DESCRIPTION = "Reported from VMRay Analyzer"
@@ -187,7 +187,7 @@ class SentinelOneConfig:
             ACTIVE = False
 
             # Selected verdicts to blacklist processes automatically for threats
-            VERDICTS = [VERDICT.SUSPICIOUS, VERDICT.MALICIOUS]
+            VERDICTS = [VERDICT.MALICIOUS]
 
             # Description for indicators which created by connector
             DESCRIPTION = "Reported from VMRay Analyzer"
@@ -198,7 +198,7 @@ class SentinelOneConfig:
             ACTIVE = False
 
             # Selected verdicts to blacklist processes automatically with deep visibility
-            VERDICTS = [VERDICT.SUSPICIOUS, VERDICT.MALICIOUS]
+            VERDICTS = [VERDICT.MALICIOUS]
 
     # Endpoint Action related configurations
     class ACTION:
@@ -208,7 +208,7 @@ class SentinelOneConfig:
             ACTIVE = False
 
             # Selected verdicts to kill threat process automatically
-            VERDICTS = [VERDICT.SUSPICIOUS, VERDICT.MALICIOUS]
+            VERDICTS = [VERDICT.MALICIOUS]
 
         # Threat add to quarantine
         class AUTO_QUARANTINE:
@@ -216,7 +216,7 @@ class SentinelOneConfig:
             ACTIVE = False
 
             # Selected verdicts to quarantine process automatically
-            VERDICTS = [VERDICT.SUSPICIOUS, VERDICT.MALICIOUS]
+            VERDICTS = [VERDICT.MALICIOUS]
 
         # Machine disk scan related configuration
         class AUTO_INITIATE_SCAN:
@@ -224,7 +224,7 @@ class SentinelOneConfig:
             ACTIVE = False
 
             # Selected verdicts to disk scan to machine automatically
-            VERDICTS = [VERDICT.SUSPICIOUS, VERDICT.MALICIOUS]
+            VERDICTS = [VERDICT.MALICIOUS]
 
         # Machine disconnect from network related configuration
         class AUTO_DISCONNECT:
@@ -232,7 +232,7 @@ class SentinelOneConfig:
             ACTIVE = False
 
             # Selected verdicts to machine disconnect from network automatically
-            VERDICTS = [VERDICT.SUSPICIOUS, VERDICT.MALICIOUS]
+            VERDICTS = [VERDICT.MALICIOUS]
 
         # Machine shutdown related configuration
         class AUTO_SHUTDOWN:
@@ -240,7 +240,7 @@ class SentinelOneConfig:
             ACTIVE = False
 
             # Selected verdicts to machine shutdown automatically
-            VERDICTS = [VERDICT.SUSPICIOUS, VERDICT.MALICIOUS]
+            VERDICTS = [VERDICT.MALICIOUS]
 
 
 # General Configuration
@@ -255,7 +255,7 @@ class GeneralConfig:
     LOG_LEVEL = log.INFO
 
     # Selected verdicts for processing
-    SELECTED_VERDICTS = [VERDICT.SUSPICIOUS, VERDICT.MALICIOUS]
+    SELECTED_VERDICTS = [VERDICT.MALICIOUS]
 
     # Time span between script iterations
     TIME_SPAN = 300
