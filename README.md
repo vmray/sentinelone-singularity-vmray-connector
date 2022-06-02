@@ -105,23 +105,23 @@ Note: API Token expiration period is 6 months. [More details](https://usea1-part
 | `INDICATOR` > `DESCRIPTION`                      | Description for indicators which were created by connector               | `Indicator based on VMRay Analyzer Report` |
 | `INDICATOR` > `SOURCE`                           | Source for indicators which were created by connector                    | `Indicator based on VMRay Analyzer Report` |
 | `BLACKLIST` > `AUTO_ADD_GLOBAL` > `ACTIVE`       | Automated add to global blacklist with SHA1 hash values [`True`/`False`] | `False`                                    |
-| `BLACKLIST` > `AUTO_ADD_GLOBAL` > `VERDICTS`     | Selected verdicts to add to global blacklist automatically               | [`malicious`]                              |
+| `BLACKLIST` > `AUTO_ADD_GLOBAL` > `VERDICTS`     | Selected verdicts to add to global blacklist automatically               | [`suspicious`,`malicious`]                 |
 | `BLACKLIST` > `AUTO_ADD_GLOBAL` > `DESCRIPTION`  | Description for added to global blacklist automatically                  | `Indicator based on VMRay Analyzer Report` |
 | `BLACKLIST` > `AUTO_ADD_THREAT` > `ACTIVE`       | Automated add to threat blacklist with SHA1 hash values [`True`/`False`] | `False`                                    |
-| `BLACKLIST` > `AUTO_ADD_THEAT` > `VERDICTS`      | Selected verdicts to add to threat blacklist automatically               | [`malicious`]                              |
+| `BLACKLIST` > `AUTO_ADD_THEAT` > `VERDICTS`      | Selected verdicts to add to threat blacklist automatically               | [`suspicious`,`malicious`]                 |
 | `BLACKLIST` > `AUTO_ADD_THREAT` > `DESCRIPTION`  | Description for added to threat blacklist automatically                  | `Indicator based on a VMRay Analyzer Report`|
 | `BLACKLIST` > `AUTO_ADD_WITH_DV` > `ACTIVE`      | Automated add to blacklist with SHA1 hash values [`True`/`False`]        | `False`                                    |
-| `BLACKLIST` > `AUTO_ADD_WITH_DV` > `VERDICTS`    | Selected verdicts to add to blacklist with deep visibility automatically | [`malicious`]                              |
+| `BLACKLIST` > `AUTO_ADD_WITH_DV` > `VERDICTS`    | Selected verdicts to add to blacklist with deep visibility automatically | [`suspicious`,`malicious`]                 |
 | `ACTION` > `AUTO_KILL` > `ACTIVE`                | Automated kill process status [`True`/`False`]                           | `False`                                    |
-| `ACTION` > `AUTO_KILL` > `VERDICTS`              | Selected verdicts to kill process automatically                          | [`malicious`]                              |
+| `ACTION` > `AUTO_KILL` > `VERDICTS`              | Selected verdicts to kill process automatically                          | [`suspicious`,`malicious`]                 |
 | `ACTION` > `AUTO_QUARANTINE` > `ACTIVE`          | Automated add quarantine status [`True`/`False`]                         | `False`                                    |
-| `ACTION` > `AUTO_QUARANTINE` > `VERDICTS`        | Selected verdicts to add quarantine automatically                        | [`malicious`]                              |
+| `ACTION` > `AUTO_QUARANTINE` > `VERDICTS`        | Selected verdicts to add quarantine automatically                        | [`suspicious`,`malicious`]                 |
 | `ACTION` > `AUTO_DISCONNECT` > `ACTIVE`          | Automated disconnect machine from network status [`True`/`False`]        | `False`                                    |
-| `ACTION` > `AUTO_DISCONNECT` > `VERDICTS`        | Selected verdicts to disconnect machine from network automatically       | [`malicious`]                              |
+| `ACTION` > `AUTO_DISCONNECT` > `VERDICTS`        | Selected verdicts to disconnect machine from network automatically       | [`suspicious`,`malicious`]                 |
 | `ACTION` > `AUTO_SHUTDOWN` > `ACTIVE`            | Automated shutdown machine status [`True`/`False`]                       | `False`                                    |
-| `ACTION` > `AUTO_SHUTDOWN` > `VERDICTS`          | Selected verdicts to shutdown machine automatically                      | [`malicious`]                              |
+| `ACTION` > `AUTO_SHUTDOWN` > `VERDICTS`          | Selected verdicts to shutdown machine automatically                      | [`suspicious`,`malicious`]                 |
 | `ACTION` > `AUTO_INITIATE_SCAN` > `ACTIVE`       | Automated anti virus scan status [`True`/`False`]                        | `False`                                    |
-| `ACTION` > `AUTO_INITIATE_SCAN` > `VERDICTS`     | Selected verdicts to anti virus scan automatically                       | [`malicious`]                              |
+| `ACTION` > `AUTO_INITIATE_SCAN` > `VERDICTS`     | Selected verdicts to anti virus scan automatically                       | [`suspicious`,`malicious`]                 |
 | `TIME_SPAN`                                      | Alert polling time span as seconds                                       | `3600`                                     |
 | `ACCOUNT_ID`                                     | SentinelOne Account ID for filtering                                     | `[]`                                       |
 | `SITE_IDS`                                       | SentinelOne Site IDs for filtering                                       | `[]`                                       |

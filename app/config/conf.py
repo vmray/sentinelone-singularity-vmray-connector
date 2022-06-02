@@ -131,7 +131,7 @@ class SentinelOneConfig:
         AUTH_URL = "%s/users/login/by-api-token" % URL
 
         # User-Agent value to use for SentinelOne for Endpoint API
-        USER_AGENT = "VMRay-VMRayAnalyzer/4.4.1"
+        USER_AGENT = "S1-VMRayAnalyzer-Connector"
 
         # Max data count per request
         # Max limit = 1.000
