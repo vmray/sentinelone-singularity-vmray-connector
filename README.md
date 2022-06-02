@@ -28,7 +28,7 @@ The connector works with both the Report and Verdict API key types for both onpr
 ## Requirements
 
 - Python 3.x with required packages ([Required Packages](app/requirements.txt))
-- SentinelOne Signularity API Key
+- SentinelOne Signularity API Token
 - VMRay Analyzer API Key
 - Docker (optional)
 
