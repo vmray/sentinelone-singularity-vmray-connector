@@ -2,7 +2,7 @@
 
 **Latest Version:** 1.0 - **Release Date:** 06/01/2022
 
-<img src="app/imgs/vmray.png" alt="drawing" width="430"/>   <img src="app/imgs/sentinelone.png" alt="drawing" width="400"/>
+<img src="app/imgs/vmray.png" alt="drawing" width="430"/><img src="app/imgs/sentinelone.png" alt="drawing" width="400"/>
 
 ## Overview
 
