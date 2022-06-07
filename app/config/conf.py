@@ -54,7 +54,7 @@ class VMRayConfig:
     # VMRay submission tags (Can't contain space)
     SUBMISSION_TAGS = ["SentinelOne"]
 
-    # Append custom tag to VMRay submission tags
+    # Append a custom tag like SITE_ID or SITE_NAME to VMRay submission tags
     SEND_CUSTOM_SUBMISSION_TAGS = False
 
     # VMRay analysis timeout value (seconds)
@@ -96,13 +96,13 @@ class SentinelOneConfig:
     # Alert polling time span as seconds
     TIME_SPAN = 3600
 
-    # Used for filter by account id
-    # "" => for first or default account
+    # Filter by account id
+    # "" => to include the first or default account
     # example: "1236876387553034321"
     ACCOUNT_ID = ""
 
-    # Used for filter by site id
-    # [] => for all
+    # Filter by site id
+    # [] => to include all sites
     # example: ["1116876387561422222", "2224027517108671444"]
     SITE_IDS = []
 
@@ -110,6 +110,7 @@ class SentinelOneConfig:
     ZIP_PASSWORD = "SentinelEvidenceFile.!"
 
     # Custom Tag Property for VMRay Submission
+    # To be able to use this you need to change the SEND_CUSTOM_SUBMISSION_TAGS property above to True
     SUBMISSION_CUSTOM_TAG_PROPERTY = SITE_PROPERTIES.SITE_ID
 
     # API related configurations
