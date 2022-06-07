@@ -27,6 +27,9 @@ The connector works with both the Report and Verdict API key types for both onpr
     ├─── config                     # Configuration directory
     │   └─── __init__.py    
     │   └─── conf.py                # Connector configuration file
+    ├─── imgs                       # Image directory for readme.md
+    │   └─── sentinelone.png        # SentinelOne logo
+    │   └─── vmray.png              # VMRay logo
     ├─── downloads                  # Directory for extracted binaries
     ├─── lib                        # Library directory
     │   └─── __init__.py     
