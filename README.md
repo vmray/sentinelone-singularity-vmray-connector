@@ -2,9 +2,13 @@
 
 **Latest Version:** 1.0 - **Release Date:** 06/01/2022
 
-<center><img src="app/imgs/vmray.png" alt="drawing" width="430"/></center>
-<center><img src="app/imgs/sentinelone.png" alt="drawing" width="400"/></center>
-
+<p align="center">
+  <img src="app/imgs/vmray.png" alt="drawing" width="430"/>
+</p>
+<p align="center">
+  <img src="app/imgs/sentinelone.png" alt="drawing" width="400"/>
+</p>
+    
 ## Overview
 
 This project aims to integrate SentinelOne Singularity and VMRay Analyzer. The connector collects threats and processes files, and query or submit these samples into VMRay Analyzer. After the submission, it retrieves IOC values from VMRay and adds note in SentinelOne Threat Notes. It enriches threats with metadata information retrieved from VMRay Analyzer. If configured, the connector can also run automated actions which are disabled by default like killing process, quarantining file, adding evidence sha1 values to blacklist, disconnecting computers from network, shutting down computers and starting antivirus scans.
