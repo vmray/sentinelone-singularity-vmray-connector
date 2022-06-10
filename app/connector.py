@@ -8,10 +8,6 @@ sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.par
 
 
 def run():
-    from app.lib.SentinelOne import SentinelOne
-    from app.lib.VMRay import VMRay
-    from app.config.conf import SentinelOneConfig, GeneralConfig, MITIGATION_TYPE, SAMPLE_TYPE
-
     if not GeneralConfig.LOG_DIR.exists():
         GeneralConfig.LOG_DIR.mkdir()
 
@@ -26,6 +22,9 @@ def run():
                     format='[%(asctime)s] [<pid:%(process)d> %(filename)s:%(lineno)s %(funcName)s] %(levelname)s %(message)s',
                     level=GeneralConfig.LOG_LEVEL)
     log.info('[CONNECTOR.PY] Started VMRay Analyzer Connector for SentinelOne')
+
+    # Load General Configuration Environments
+    GeneralConfig.load_environments()
 
     # Initializing and authenticating api instances
     sentinel = SentinelOne(log)
@@ -174,6 +173,10 @@ def run():
             # If sample identified as suspicious or malicious
             # we need to extract IOC values and import them to SentinelOne
             if sample_data["sample_verdict"] in GeneralConfig.SELECTED_VERDICTS:
+                # If api key type is Verdict, unlocking reports.
+                if VMRayConfig.API_KEY_TYPE == VMRAY_API_KEY_TYPE.VERDICT:
+                    vmray.unlock_reports(sample_data["sample_id"])
+
                 # Retrieving and parsing indicators
                 sample_iocs = vmray.get_sample_iocs(sample_data)
                 ioc_data = vmray.parse_sample_iocs(sample_iocs)
@@ -244,7 +247,10 @@ def run():
 
 
 if __name__ == "__main__":
-    from app.config.conf import GeneralConfig, RUNTIME_MODE
+    from app.lib.SentinelOne import SentinelOne
+    from app.lib.VMRay import VMRay
+    from app.config.conf import GeneralConfig, SentinelOneConfig, VMRayConfig
+    from app.config.conf import RUNTIME_MODE, SAMPLE_TYPE, MITIGATION_TYPE, VMRAY_API_KEY_TYPE
 
     if GeneralConfig.RUNTIME_MODE == RUNTIME_MODE.DOCKER:
         while True:
