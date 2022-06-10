@@ -13,5 +13,8 @@ RUN pip install -r requirements.txt
 # Creating permanent volume for logs
 VOLUME /app/log
 
+# Creating permanent volume for configs
+VOLUME /app/config
+
 # Starting script as an entrypoint
 ENTRYPOINT ["python", "connector.py"]
