@@ -56,6 +56,7 @@ Clone the repository into a local folder.
 
 Install the requirements.
 
+    cd sentinelone-singularity-vmray-connector/app
     pip install -r requirements.txt
 
 Update the [conf.py](app/config/conf.py) file with your specific configurations.
