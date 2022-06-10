@@ -86,6 +86,7 @@ After running the Docker container you can see connector logs in the log directo
 | Configuration Item            | Description                                                 | Default                                              |
 |:------------------------------|:------------------------------------------------------------|:-----------------------------------------------------|
 | `API_KEY_TYPE`                | Enum for VMRay API Key Type [`REPORT`/`VERDICT`]            | `REPORT`                                             |
+| `API_KEY`                     | API Key                                                     |                                                      |
 | `URL`                         | URL of VMRay instance                                       | `https://eu.cloud.vmray.com`                         |
 | `SSL_VERIFY`                  | Enable or disable certificate verification [`True`/`False`] | `True`                                               |
 | `SUBMISSION_COMMENT`          | Comment for submitted samples                               | `Sample from VMRay Analyzer - SentinelOne Connector` |
@@ -108,6 +109,7 @@ Note: API Token expiration period is 6 months. [More details](https://usea1-part
 
 | Configuration Item                               | Description                                                              | Default                                      |
 |:-------------------------------------------------|:-------------------------------------------------------------------------|:---------------------------------------------|
+| `API` > `API_TOKEN`                              | SentinelOne API Token                                                    |                                              |
 | `API` > `HOSTNAME_URL`                           | Hostname to access SentinelOne                                           |                                              |
 | `API` > `API_PREFIX`                             | API Prefix to create SentinelOne API URL                                 | `web/api/v2.1`                               |
 | `API` > `USER_AGENT`                             | User-Agent value to use for SentinelOne                                  | `S1-VMRayAnalyzer-Connector`                 |
@@ -144,14 +146,6 @@ Note: API Token expiration period is 6 months. [More details](https://usea1-part
 | `SUBMISSION_CUSTOM_TAG_PROPERTY`                 | Custom tag property for VMRay submission                                 | `siteId`                                     |
 
 ## General Connector Configurations
-
-- Edit environment variables in [.env](app/config/.env) file.
-
-| Configuration Item              | Description           | Default                        |
-|:--------------------------------|:----------------------|:-------------------------------|
-| `API_KEY`                       | VMRay API Key         |                                |
-| `API_TOKEN`                     | SentinelOne API Token |                                |
-
 
 - Edit the `GeneralConfig` class in [conf.py](app/config/conf.py) file.
 
