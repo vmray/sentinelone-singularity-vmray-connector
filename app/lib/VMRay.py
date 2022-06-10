@@ -404,4 +404,20 @@ class VMRay:
             for analysis in analyses:
                 if analysis["analysis_severity"] == "error":
                     self.log.error("Analysis %d for submission %d has error: %s" % (
-                    analysis["analysis_id"], submission["submission_id"], analysis["analysis_result_str"]))
+                        analysis["analysis_id"], submission["submission_id"], analysis["analysis_result_str"]))
+
+    def unlock_reports(self, sample_id):
+        """
+        Unlock reports for Verdict Api Keys
+        :param sample_id: id value of the sample
+        :return status: boolean value of status
+        """
+        method = "POST"
+        url = "/rest/sample/%s/unlock_reports" % str(sample_id)
+
+        try:
+            self.api.call(method, url)
+            return True
+        except Exception as err:
+            self.log.debug("Sample %s reports couldn't unlock. Error: %s" % (sample_id, err))
+            return False
