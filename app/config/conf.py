@@ -66,6 +66,9 @@ class VMRayConfig:
     # Connector Name
     CONNECTOR_NAME = "SentinelOne"
 
+    # Connector Version
+    CONNECTOR_VERSION = "1.0"
+
 
 # Sample Types
 class SAMPLE_TYPE:
@@ -111,7 +114,7 @@ class SentinelOneConfig:
 
     # Custom Tag Property for VMRay Submission
     # To be able to use this you need to change the SEND_CUSTOM_SUBMISSION_TAGS property above to True
-    SUBMISSION_CUSTOM_TAG_PROPERTY = SITE_PROPERTIES.SITE_ID
+    SUBMISSION_CUSTOM_TAG_PROPERTY = SITE_PROPERTIES.SITE_NAME
 
     # API related configurations
     class API:

@@ -1,4 +1,5 @@
 import io
+import re
 import time
 import ipaddress
 from datetime import datetime
@@ -51,7 +52,7 @@ class VMRay:
         """
         try:
             self.api = VMRayRESTAPI(self.config.URL, self.config.API_KEY, self.config.SSL_VERIFY,
-                                    self.config.CONNECTOR_NAME)
+                                    self.config.CONNECTOR_NAME + "/" + self.config.CONNECTOR_VERSION)
             self.log.debug("Successfully authenticated the VMRay %s API" % self.config.API_KEY_TYPE)
         except Exception as err:
             self.log.error(err)
@@ -281,6 +282,9 @@ class VMRay:
                     params["sample_file"] = file_object
 
                     if self.config.SEND_CUSTOM_SUBMISSION_TAGS:
+                        # Replace non-alphanumeric characters
+                        evidence["custom_tag"] = re.sub('[^0-9a-zA-Z]+', '_', evidence["custom_tag"])
+
                         params["tags"] = ",".join(self.config.SUBMISSION_TAGS + [evidence["custom_tag"]])
 
                     try:

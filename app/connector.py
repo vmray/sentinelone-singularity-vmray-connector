@@ -8,10 +8,6 @@ sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.par
 
 
 def run():
-    from app.lib.SentinelOne import SentinelOne
-    from app.lib.VMRay import VMRay
-    from app.config.conf import SentinelOneConfig, GeneralConfig, MITIGATION_TYPE, SAMPLE_TYPE
-
     if not GeneralConfig.LOG_DIR.exists():
         GeneralConfig.LOG_DIR.mkdir()
 
@@ -244,7 +240,10 @@ def run():
 
 
 if __name__ == "__main__":
-    from app.config.conf import GeneralConfig, RUNTIME_MODE
+    from app.lib.SentinelOne import SentinelOne
+    from app.lib.VMRay import VMRay
+    from app.config.conf import GeneralConfig, SentinelOneConfig
+    from app.config.conf import RUNTIME_MODE, SAMPLE_TYPE, MITIGATION_TYPE
 
     if GeneralConfig.RUNTIME_MODE == RUNTIME_MODE.DOCKER:
         while True:
