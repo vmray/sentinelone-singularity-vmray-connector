@@ -1,6 +1,6 @@
 # VMRay Analyzer Connector for SentinelOne
 
-**Latest Version:** 1.0 - **Release Date:** June 07, 2022
+**Latest Version:** 1.1 - **Release Date:** June 10, 2022
 
 <p align="center">
   <img src="app/imgs/vmray.png" alt="drawing" width="430"/>
