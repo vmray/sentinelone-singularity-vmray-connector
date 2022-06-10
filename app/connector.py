@@ -23,6 +23,9 @@ def run():
                     level=GeneralConfig.LOG_LEVEL)
     log.info('[CONNECTOR.PY] Started VMRay Analyzer Connector for SentinelOne')
 
+    # Load General Configuration Environments
+    GeneralConfig.load_environments()
+
     # Initializing and authenticating api instances
     sentinel = SentinelOne(log)
     vmray = VMRay(log)
