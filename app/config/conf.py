@@ -1,7 +1,5 @@
-import os
 import pathlib
 import logging as log
-from dotenv import load_dotenv
 
 
 class RUNTIME_MODE:
@@ -42,8 +40,7 @@ class VMRayConfig:
     # VMRay Report or Verdict API KEY
     # For more effective usage of quota please use a Verdict API Key
     # The connector will automatically unlock the entire report if the verdict is non-clean
-    # You have to change this property in the app/conf/.env file.
-    API_KEY = None
+    API_KEY = ""
 
     # VMRay REST API URL
     URL = "https://eu.cloud.vmray.com"
@@ -122,8 +119,10 @@ class SentinelOneConfig:
     # API related configurations
     class API:
         # SentinelOne API, API Token
-        # Note: You have to change this property in the app/conf/.env file.
-        API_TOKEN = None
+        # Used for programmatic API accesses
+        # To learn more about temporary and 6-month tokens and how to generate them,
+        # see https://support.sentinelone.com/hc/en-us/articles/360004195934.
+        API_TOKEN = ""
 
         # Hostname to access SentinelOne
         HOSTNAME_URL = "https://usea1-partners.sentinelone.net"
@@ -271,21 +270,6 @@ class GeneralConfig:
     # If selected as CLI, script works only once, you need to create cron job for continuous processing
     # If selected as DOCKER, scripts works continuously with TIME_SPAN above
     RUNTIME_MODE = RUNTIME_MODE.DOCKER
-
-    # Load Configuration Environments
-    @staticmethod
-    def load_environments():
-        BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        if not VMRayConfig.API_KEY and not SentinelOneConfig.API.API_TOKEN:
-            load_dotenv(dotenv_path=os.path.join(BASE_DIR, 'config/.env'))
-        else:
-            load_dotenv(dotenv_path=os.path.join(BASE_DIR, 'config/.env'), override=True)
-
-        # VMRay Configs
-        VMRayConfig.API_KEY = os.environ.get("API_KEY")
-
-        # SentinelOne Configs
-        SentinelOneConfig.API.API_TOKEN = os.environ.get("API_TOKEN")
 
 
 # VMRay Analyzer and SentinelOne indicator field mappings
