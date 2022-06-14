@@ -171,8 +171,7 @@ def run():
             # we need to extract IOC values and import them to SentinelOne
             if sample_data["sample_verdict"] in GeneralConfig.SELECTED_VERDICTS:
                 # If api key type is Verdict, unlocking reports.
-                if VMRayConfig.API_KEY_TYPE == VMRAY_API_KEY_TYPE.VERDICT:
-                    vmray.unlock_reports(sample_data["sample_id"])
+                vmray.unlock_reports(sample_data["sample_id"])
 
                 # Retrieving and parsing indicators
                 sample_iocs = vmray.get_sample_iocs(sample_data)
@@ -246,8 +245,8 @@ def run():
 if __name__ == "__main__":
     from app.lib.SentinelOne import SentinelOne
     from app.lib.VMRay import VMRay
-    from app.config.conf import GeneralConfig, SentinelOneConfig, VMRayConfig
-    from app.config.conf import RUNTIME_MODE, SAMPLE_TYPE, MITIGATION_TYPE, VMRAY_API_KEY_TYPE
+    from app.config.conf import GeneralConfig, SentinelOneConfig
+    from app.config.conf import RUNTIME_MODE, SAMPLE_TYPE, MITIGATION_TYPE
 
     if GeneralConfig.RUNTIME_MODE == RUNTIME_MODE.DOCKER:
         while True:

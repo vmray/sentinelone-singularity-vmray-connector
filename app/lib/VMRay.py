@@ -53,7 +53,7 @@ class VMRay:
         try:
             self.api = VMRayRESTAPI(self.config.URL, self.config.API_KEY, self.config.SSL_VERIFY,
                                     self.config.CONNECTOR_NAME + "/" + self.config.CONNECTOR_VERSION)
-            self.log.debug("Successfully authenticated the VMRay %s API" % self.config.API_KEY_TYPE)
+            self.log.debug("Successfully authenticated the VMRay API")
         except Exception as err:
             self.log.error(err)
             raise
@@ -417,7 +417,7 @@ class VMRay:
 
         try:
             self.api.call(method, url)
+            self.log.debug("Sample %s reports unlocked." % sample_id)
             return True
         except Exception as err:
-            self.log.debug("Sample %s reports couldn't unlock. Error: %s" % (sample_id, err))
             return False
