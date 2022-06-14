@@ -14,12 +14,6 @@ class REQUEST_METHOD:
     DELETE = "DELETE"
 
 
-# VMRay API Key types enum
-class VMRAY_API_KEY_TYPE:
-    REPORT = 0
-    VERDICT = 1
-
-
 # VMRay verdicts enum
 class VERDICT:
     SUSPICIOUS = "suspicious"
@@ -34,9 +28,6 @@ class JOB_STATUS:
 
 # VMRay Configuration
 class VMRayConfig:
-    # VMRay API Key type setting
-    API_KEY_TYPE = VMRAY_API_KEY_TYPE.REPORT
-
     # VMRay Report or Verdict API KEY
     # For more effective usage of quota please use a Verdict API Key
     # The connector will automatically unlock the entire report if the verdict is non-clean

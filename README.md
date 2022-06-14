@@ -86,7 +86,6 @@ After running the Docker container you can see connector logs in the log directo
 
 | Configuration Item            | Description                                                 | Default                                              |
 |:------------------------------|:------------------------------------------------------------|:-----------------------------------------------------|
-| `API_KEY_TYPE`                | Enum for VMRay API Key Type [`REPORT`/`VERDICT`]            | `REPORT`                                             |
 | `API_KEY`                     | API Key                                                     |                                                      |
 | `URL`                         | URL of VMRay instance                                       | `https://eu.cloud.vmray.com`                         |
 | `SSL_VERIFY`                  | Enable or disable certificate verification [`True`/`False`] | `True`                                               |
