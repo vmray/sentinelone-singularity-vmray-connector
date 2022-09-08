@@ -244,13 +244,13 @@ class SentinelOne:
                     threat_details["site_id"] = threat["agentRealtimeInfo"]["siteId"]
                     threat_details["site_name"] = threat["agentRealtimeInfo"]["siteName"]
                     threat_details["custom_tag"] = threat["agentRealtimeInfo"][self.config.SUBMISSION_CUSTOM_TAG_PROPERTY]
-                    sha1 = threat_details["sha1"]
+                    threat_id = threat["id"]
 
-                    # if sha1 is empty or none, continue
-                    if sha1 is not None and sha1 != "":
-                        # add threat information to dictionary if evidence dictionary doesn't have sha1 value
-                        if sha1 not in evidences.keys():
-                            evidences[sha1] = threat_details
+                    # if threat id is empty or none, continue
+                    if threat_id is not None and threat_id != "":
+                        # add threat information to dictionary if evidence dictionary doesn't have threat id
+                        if threat_id not in evidences.keys():
+                            evidences[threat_id] = threat_details
                 except Exception as err:
                     self.log.warning("Failed to parse threat object - Error: %s" % err)
             self.log.info("Successfully retrieved %d evidences from %d threats" % (len(evidences), len(result)))
@@ -267,8 +267,8 @@ class SentinelOne:
         """
         self.log.info("Download link generating for %d evidences" % len(evidences))
 
-        for sha1, evidence in evidences.items():
-            self.log.info("Sending request to fetch evidence file %s" % sha1)
+        for evidence_id, evidence in evidences.items():
+            self.log.info("Sending request to fetch evidence file %s" % evidence["sha1"])
 
             params = {
                 "data": {
@@ -276,7 +276,7 @@ class SentinelOne:
                 },
                 "filter": {
                     "ids": [
-                        evidence["id"]
+                        evidence_id
                     ]
                 }
             }
@@ -299,7 +299,7 @@ class SentinelOne:
                         "skip": 0,
                         "limit": 1,
                         "activityTypes": ACTIVITY_TYPE.AGENT_UPLOADED_THREAT_FILE,
-                        "threatIds": evidence["id"]
+                        "threatIds": evidence_id
                     }
 
                     request_path = "/activities"
@@ -397,14 +397,14 @@ class SentinelOne:
                     for process_data in result:
                         # try-except block for handling dictionary key related exceptions
                         try:
-                            sha1 = process_data["processImageSha1Hash"]
+                            process_id = process_data["id"]
 
-                            # if sha1 is empty or none, continue
-                            if sha1 is not None and sha1 != "":
-                                # add threat information to dictionary if evidence dictionary doesn't have sha1 value
-                                if sha1 not in processes.keys():
-                                    processes[sha1] = {
-                                        "sha1": sha1,
+                            # if process id is empty or none, continue
+                            if process_id is not None and process_id != "":
+                                # add threat information to dictionary if evidence dictionary doesn't have process id
+                                if process_id not in processes.keys():
+                                    processes[process_id] = {
+                                        "sha1": process_data["processImageSha1Hash"],
                                         "agent_id": process_data["agentId"],
                                         "process_name": process_data["processName"],
                                         "process_path": process_data["processImagePath"],
@@ -430,8 +430,8 @@ class SentinelOne:
         :return processes: list of process objects with download link
         """
         self.log.info("Download link generating for %d processes" % len(processes))
-        for sha1, process in processes.items():
-            self.log.info("Sending request to fetch process file %s" % sha1)
+        for process_id, process in processes.items():
+            self.log.info("Sending request to fetch process file %s" % process["sha1"])
 
             params = {
                 "data": {
@@ -474,12 +474,12 @@ class SentinelOne:
                         # set download_url to process
                         process["download_url"] = self.config.API.URL + activity["data"]["downloadUrl"]
 
-                        self.log.info("File fetched successfully %s" % sha1)
+                        self.log.info("File fetched successfully %s" % process["sha1"])
                         break
 
                     # Skip after timeout seconds if the server is not online or file is not returning.
                     if (datetime.utcnow() - requested_date).seconds >= self.config.API.FETCH_FILE_TIMEOUT:
-                        self.log.error("Failed to fetch file request %s - Error: Timeout", sha1)
+                        self.log.error("Failed to fetch file request %s - Error: Timeout", process["sha1"])
                         break
                     else:
                         time.sleep(self.config.API.FETCH_FILE_TIME_SPAN)
@@ -497,7 +497,7 @@ class SentinelOne:
         downloaded_samples = []
         self.log.info("Downloading %d file" % len(samples))
 
-        for sha1, sample in samples.items():
+        for sample_id, sample in samples.items():
             if sample["download_url"]:
                 self.log.info("Downloading file %s" % sample["sha1"])
 

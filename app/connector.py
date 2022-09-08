@@ -37,14 +37,14 @@ def run():
     evidences = sentinel.get_evidences_from_threats()
 
     # Checking hash values in VMRay database, if evidence is found on VMRay no need to submit again
-    for sha1 in evidences:
-        sample = vmray.get_sample(sha1)
-        evidences[sha1]["sample"] = sample
+    for evidence_id, evidence in evidences.items():
+        sample = vmray.get_sample(evidence["sha1"])
+        evidence["sample"] = sample
         if sample is not None:
             # if evidence found on VMRay we need to store sample metadata in Evidence object
-            found_evidences[sha1] = evidences[sha1]
+            found_evidences[evidence_id] = evidence
         else:
-            download_evidences[sha1] = evidences[sha1]
+            download_evidences[evidence_id] = evidence
 
     log.info("%d evidences found on VMRay database" % len(found_evidences))
     log.info("%d evidences need to be downloaded and submitted" % len(download_evidences))
@@ -55,7 +55,7 @@ def run():
     downloaded_evidences = sentinel.download_samples(fetched_evidences)
     log.info("%d evidence file downloaded successfully" % len(downloaded_evidences))
 
-    # Dict of processes file which found on VMRay database
+    # Dict of processes which found on VMRay database
     found_processes = {}
 
     # Dict of processes which need to be downloaded from SentinelOne
@@ -65,14 +65,14 @@ def run():
     processes = sentinel.get_process_from_dv()
 
     # Checking hash values in VMRay database, if process file is found on VMRay no need to submit again
-    for sha1 in processes:
-        sample = vmray.get_sample(sha1)
-        processes[sha1]["sample"] = sample
+    for process_id, process in processes.items():
+        sample = vmray.get_sample(process["sha1"])
+        process["sample"] = sample
         if sample is not None:
             # if process file found on VMRay we need store sample metadata in Process object
-            found_processes[sha1] = processes[sha1]
+            found_processes[process_id] = process
         else:
-            download_processes[sha1] = processes[sha1]
+            download_processes[process_id] = process
 
     log.info("%d process file found on VMRay database" % len(found_processes))
     log.info("%d process file need to be downloaded and submitted" % len(download_processes))
@@ -91,8 +91,8 @@ def run():
     old_indicators = sentinel.get_indicators()
 
     # Retrieving indicators from VMRay Analyzer for found evidences
-    for sha1 in found_samples:
-        sample = found_samples[sha1]
+    for found_sample in found_samples.values():
+        sample = found_sample
         sample_data = vmray.parse_sample_data(sample["sample"])
 
         # If sample identified as suspicious or malicious
@@ -170,6 +170,10 @@ def run():
             # If sample identified as suspicious or malicious
             # we need to extract IOC values and import them to SentinelOne
             if sample_data["sample_verdict"] in GeneralConfig.SELECTED_VERDICTS:
+                # Retrieving sample object value from evidence and process
+                evidence_object = next((file for file in evidences if file['sha1'] == sample_data["sample_sha1hash"]), None)
+                process_object = next((file for file in processes if file['sha1'] == sample_data["sample_sha1hash"]), None)
+
                 # If api key type is Verdict, unlocking reports.
                 vmray.unlock_reports(sample_data["sample_id"])
 
@@ -185,13 +189,13 @@ def run():
 
                 # Getting sample object from evidence list or process list
                 threat_sample = None
-                if sample_data["sample_sha1hash"] in evidences:
-                    threat_sample = evidences[sample_data["sample_sha1hash"]]
-                elif sample_data["sample_sha1hash"] in processes:
-                    threat_sample = processes[sample_data["sample_sha1hash"]]
+                if evidence_object:
+                    threat_sample = evidences[evidence_object["id"]]
+                elif process_object:
+                    threat_sample = processes[process_object["id"]]
 
                 # if SentinelOne has this threat add a note with vtis and sample metadata
-                if sample_data["sample_sha1hash"] in evidences:
+                if evidence_object:
                     # Retrieving and parsing sample vtis from VMRay Analyzer
                     vti_data = vmray.get_sample_vtis(sample_data["sample_id"])
                     sample_vtis = vmray.parse_sample_vtis(vti_data)
@@ -214,12 +218,12 @@ def run():
 
                 # Mitigating threat with Kill Process action
                 if sentinel.config.ACTION.AUTO_KILL.ACTIVE:
-                    if sample_data["sample_sha1hash"] in evidences and sample_data["sample_verdict"] in sentinel.config.ACTION.AUTO_KILL.VERDICTS:
+                    if evidence_object and sample_data["sample_verdict"] in sentinel.config.ACTION.AUTO_KILL.VERDICTS:
                         sentinel.auto_mitigate_threat(threat_sample["id"], threat_sample['agent_id'], MITIGATION_TYPE.KILL)
 
                 # Mitigating threat with Quarantine File
                 if sentinel.config.ACTION.AUTO_QUARANTINE.ACTIVE:
-                    if sample_data["sample_sha1hash"] in evidences and sample_data["sample_verdict"] in sentinel.config.ACTION.AUTO_QUARANTINE.VERDICTS:
+                    if evidence_object and sample_data["sample_verdict"] in sentinel.config.ACTION.AUTO_QUARANTINE.VERDICTS:
                         sentinel.auto_mitigate_threat(threat_sample["id"], threat_sample['agent_id'], MITIGATION_TYPE.QUARANTINE)
 
                 # Running disk scan action
