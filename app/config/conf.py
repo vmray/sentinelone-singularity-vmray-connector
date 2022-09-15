@@ -85,6 +85,18 @@ class SITE_PROPERTIES:
     SITE_NAME = "siteName"
 
 
+# SentinelOne Threat Note subtype enum
+class NOTE_SUBTYPES:
+    VERDICT = "verdict"
+    VTI = "vti"
+    IOC = "ioc"
+
+
+class COLLECT_METHODS:
+    THREAT = "threat"
+    DEEP_VISIBILITY = "deep-visibility"
+
+
 # SentinelOne Configuration
 class SentinelOneConfig:
     # Alert polling time span as seconds
@@ -106,6 +118,9 @@ class SentinelOneConfig:
     # Custom Tag Property for VMRay Submission
     # To be able to use this you need to change the SEND_CUSTOM_SUBMISSION_TAGS property above to True
     SUBMISSION_CUSTOM_TAG_PROPERTY = SITE_PROPERTIES.SITE_NAME
+
+    # Methods to be used to collect samples
+    SELECTED_COLLECT_METHODS = [COLLECT_METHODS.THREAT, COLLECT_METHODS.DEEP_VISIBILITY]
 
     # API related configurations
     class API:
@@ -238,6 +253,11 @@ class SentinelOneConfig:
 
             # Selected verdicts to machine shutdown automatically
             VERDICTS = [VERDICT.MALICIOUS]
+
+    # Threat Note related configurations
+    class NOTE:
+        # Selected subtypes for processing
+        SELECTED_SUBTYPES = [NOTE_SUBTYPES.VERDICT, NOTE_SUBTYPES.VTI, NOTE_SUBTYPES.IOC]
 
 
 # General Configuration

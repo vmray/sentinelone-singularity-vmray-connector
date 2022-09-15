@@ -8,7 +8,8 @@ import requests
 import json
 import time
 
-from app.config.conf import SentinelOneConfig, ACTIVITY_TYPE, SAMPLE_TYPE, IOC_FIELD_MAPPINGS, REQUEST_METHOD
+from app.config.conf import SentinelOneConfig, ACTIVITY_TYPE, SAMPLE_TYPE, IOC_FIELD_MAPPINGS, REQUEST_METHOD, \
+    NOTE_SUBTYPES
 
 
 class SentinelOne:
@@ -397,13 +398,13 @@ class SentinelOne:
                     for process_data in result:
                         # try-except block for handling dictionary key related exceptions
                         try:
-                            process_id = process_data["id"]
+                            sha1 = process_data["processImageSha1Hash"]
 
                             # if process id is empty or none, continue
-                            if process_id is not None and process_id != "":
-                                # add threat information to dictionary if evidence dictionary doesn't have process id
-                                if process_id not in processes.keys():
-                                    processes[process_id] = {
+                            if sha1 is not None and sha1 != "":
+                                # add threat information to dictionary if evidence dictionary doesn't have sha1 value
+                                if sha1 not in processes.keys():
+                                    processes[sha1] = {
                                         "sha1": process_data["processImageSha1Hash"],
                                         "agent_id": process_data["agentId"],
                                         "process_name": process_data["processName"],
@@ -430,8 +431,8 @@ class SentinelOne:
         :return processes: list of process objects with download link
         """
         self.log.info("Download link generating for %d processes" % len(processes))
-        for process_id, process in processes.items():
-            self.log.info("Sending request to fetch process file %s" % process["sha1"])
+        for sha1, process in processes.items():
+            self.log.info("Sending request to fetch process file %s" % sha1)
 
             params = {
                 "data": {
@@ -687,7 +688,7 @@ class SentinelOne:
                     self.log.warning("Failed to parse note object - Error: %s" % err)
         return notes
 
-    def create_note(self, threat_id, sample_data, sample_vtis):
+    def create_note(self, threat_id, sample_data, sample_vtis, sample_iocs):
         """
         Enrich threats with VMRay Analyzer submission metadata
         https://usea1-partners.sentinelone.net/api-doc/api-details?category=threat-notes&api=add-note-to-multiple
@@ -705,7 +706,8 @@ class SentinelOne:
         note += sample_data["sample_sha1hash"] + "\n\n"
 
         # adding VMRay Analyzer Verdict
-        note += "VMRay Analyzer Verdict: %s\n\n" % sample_data["sample_verdict"].upper()
+        if NOTE_SUBTYPES.VERDICT in self.config.NOTE.SELECTED_SUBTYPES:
+            note += "VMRay Analyzer Verdict: \n%s\n\n" % sample_data["sample_verdict"].upper()
 
         # adding VMRay Analyzer sample url
         note += "Sample Url:\n"
@@ -720,8 +722,20 @@ class SentinelOne:
         note += "\n".join(sample_data["sample_threat_names"]) + "\n\n"
 
         # adding VMRay Analyzer VTI's
-        note += "VTI's:\n"
-        note += "\n".join(list(set([vti["operation"] for vti in sample_vtis]))) + "\n\n"
+        if NOTE_SUBTYPES.VTI in self.config.NOTE.SELECTED_SUBTYPES:
+            note += "VTI's:\n"
+            note += "\n".join(list({vti['operation']: vti for vti in sample_vtis})) + "\n\n"
+
+        # adding VMRay Analyzer IOC's
+        if NOTE_SUBTYPES.IOC in self.config.NOTE.SELECTED_SUBTYPES:
+            note += "IOC's:\n"
+            ioc_note = []
+            for key, value in sample_iocs.items():
+                if len(value) > 0:
+                    ioc_note.append(key.upper() + ": " + ", ".join(value))
+                else:
+                    ioc_note.append(key.upper() + ": -")
+            note += "\n".join(ioc_note) + "\n\n"
 
         # Checking whether note is in the threat
         threat_notes = self.get_notes(threat_id)

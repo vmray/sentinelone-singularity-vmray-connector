@@ -176,11 +176,18 @@ class VMRay:
         """
         parsed_vtis = []
 
-        if vtis is not None:
+        if vtis is not None and len(vtis["threat_indicators"]) > 0:
             for vti in vtis["threat_indicators"]:
-                parsed_vtis.append({"category": vti["category"],
-                                    "classifications": vti["classifications"],
-                                    "operation": vti["operation"]})
+                parsed_vtis.append({
+                    "category": vti["category"],
+                    "classifications": vti["classifications"],
+                    "operation": vti["operation"],
+                    "score": vti["score"]
+                })
+
+            # VTIs sorted by score
+            parsed_vtis.sort(key=lambda x: x.get("operation"))
+            parsed_vtis.sort(key=lambda x: x.get("score"), reverse=True)
         return parsed_vtis
 
     def parse_sample_iocs(self, iocs):
@@ -223,9 +230,9 @@ class VMRay:
                             sha1.add(file_hash["sha1_hash"])
                             md5.add(file_hash["md5_hash"])
 
-        file_iocs["sha256"] = sha256
-        file_iocs["sha1"] = sha1
-        file_iocs["md5"] = md5
+        file_iocs["sha256"] = sorted(sha256)
+        file_iocs["sha1"] = sorted(sha1)
+        file_iocs["md5"] = sorted(md5)
 
         return file_iocs
 
@@ -255,8 +262,8 @@ class VMRay:
                     except Exception as err:
                         domains.add(urlparse(original_url).netloc)
 
-        network_iocs["domain"] = domains
-        network_iocs["ipv4"] = ip_addresses
+        network_iocs["domain"] = sorted(domains)
+        network_iocs["ipv4"] = sorted(ip_addresses)
 
         return network_iocs
 
@@ -416,8 +423,10 @@ class VMRay:
         url = "/rest/sample/%s/unlock_reports" % str(sample_id)
 
         try:
-            self.api.call(method, url)
-            self.log.debug("Sample %s reports unlocked." % sample_id)
+            response = self.api.call(method, url)
+            reports_ids = response["unlocked_analysis_ids"]
+            if len(reports_ids) > 0:
+                self.log.debug("Sample %s reports(%s) unlocked." % sample_id, ",".join(reports_ids))
             return True
         except Exception as err:
             return False
