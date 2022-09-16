@@ -546,9 +546,12 @@ class SentinelOne:
                                         if file_path[0] == "\\":
                                             file_path = file_path[1:]
                                         file_path = file_path.replace("\\", os.sep)
-                                        sample["download_folder_path"] = unzipped_file_path
-                                        sample["download_file_path"] = unzipped_file_path / pathlib.Path(file_path)
-                                        downloaded_samples.append(sample)
+                                        file_sha1_hash = manifest_json_file["sha1"]
+                                        # Check the downloaded file hash is equal to the sample hash
+                                        if file_sha1_hash == sample["sha1"]:
+                                            sample["download_folder_path"] = unzipped_file_path
+                                            sample["download_file_path"] = unzipped_file_path / pathlib.Path(file_path)
+                                            downloaded_samples.append(sample)
                         except Exception as err:
                             self.log.error("Failed to extract file %s - Error: %s" % (sample["sha1"], err))
                     except Exception as err:
