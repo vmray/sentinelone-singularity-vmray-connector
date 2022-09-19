@@ -1,9 +1,7 @@
 import io
 import re
 import time
-import ipaddress
 from datetime import datetime
-from urllib.parse import urlparse
 from vmray.rest_api import VMRayRESTAPI
 from app.config.conf import VMRayConfig, GeneralConfig, JOB_STATUS
 
@@ -186,7 +184,7 @@ class VMRay:
                 })
 
             # VTIs sorted by score
-            parsed_vtis.sort(key=lambda x: x.get("operation"))
+            parsed_vtis.sort(key=lambda x: x.get("category"))
             parsed_vtis.sort(key=lambda x: x.get("score"), reverse=True)
         return parsed_vtis
 
@@ -245,6 +243,7 @@ class VMRay:
         network_iocs = {}
         domains = set()
         ip_addresses = set()
+        urls = set()
 
         for ioc_type in iocs:
             ips = iocs[ioc_type]["iocs"]["ips"]
@@ -252,18 +251,15 @@ class VMRay:
                 domains.update(ip["domains"])
                 ip_addresses.add(ip["ip_address"])
 
-            urls = iocs[ioc_type]["iocs"]["urls"]
-            for url in urls:
-                ip_addresses.update(url["ip_addresses"])
-                for original_url in url["original_urls"]:
-                    try:
-                        ipaddress.ip_address(urlparse(original_url).netloc)
-                        ip_addresses.add(urlparse(original_url).netloc)
-                    except Exception as err:
-                        domains.add(urlparse(original_url).netloc)
+            ioc_urls = iocs[ioc_type]["iocs"]["urls"]
+            for ioc_url in ioc_urls:
+                ip_addresses.update(ioc_url["ip_addresses"])
+                urls.add(ioc_url["url"])
+                urls.update(ioc_url["original_urls"])
 
         network_iocs["domain"] = sorted(domains)
         network_iocs["ipv4"] = sorted(ip_addresses)
+        network_iocs["url"] = sorted(urls)
 
         return network_iocs
 
