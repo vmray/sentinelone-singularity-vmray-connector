@@ -146,7 +146,7 @@ Note: API Token expiration period is 6 months. [More details](https://usea1-part
 | `SITE_IDS`                                      | SentinelOne Site IDs for filtering                                       | `[]`                                                             |
 | `ZIP_PASSWORD`                                  | ZIP Password to use for download files                                   | `SentinelEvidenceFile.!`                                         |
 | `SUBMISSION_CUSTOM_TAG_PROPERTY`                | Custom tag property for VMRay submission                                 | `siteId`                                                         |
-| `SELECTED_COLLECT_METHODS`                      | Methods to be used to collect samples                                    | [`threat`,`deep-visibility`]                                     |
+| `SELECTED_COLLECT_METHODS`                      | Methods to be used to collect samples                                    | [`threat`]                                     |
 
 ## General Connector Configurations
 
@@ -169,5 +169,6 @@ Note: API Token expiration period is 6 months. [More details](https://usea1-part
 | `ipv4`   | Connected IPV4 address    | `IPV4`                  |
 | `sha256` | SHA256 Hash value of file | `SHA256`                |
 | `domain` | Connected domain          | `DNS`                   |
+| `url`    | Connected url             | `URL`                   |
 | `sha1`   | SHA1 Hash value of file   | `SHA1`                  |
 | `md5`    | MD5 Hash value of file    | `MD5`                   |

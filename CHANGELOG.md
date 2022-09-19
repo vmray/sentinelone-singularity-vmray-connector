@@ -1,20 +1,20 @@
 # Changelog
 
-## [1.2 - Next Release]
+## [1.2 - 19.09.2022]
 ### Added
-- Configurable sample collection methods feature
-- Configurable threat note subtypes feature
-- Configurable Threat note IOC fields feature
+- Configuration parameter to filter sample collection methods
+- Configuration parameter to filter IOC fields in threat notes
+- Configuration parameter to filter analysis results in threat notes
 
 ### Changed
 - IOCs title added to threat note
 - URL field added to IOCs
-- Disabled Process fetch from Deep Visibility by default
+- Sample collection from processes (deep visibility) is disabled by default
 
 ### Fixed
 - Key conflict error for evidence and process found in VMRay
-- VTIs sort error for threat notes
-- IOCs sort error for threat notes
-- Domain and IP resolve from URL for IOC parser
+- VTI sort error in threat notes
+- IOC sort error in threat notes
+- Domain and IP resolution with URL
 
 ## [1.1 - Initial Release] - 10.06.2022
