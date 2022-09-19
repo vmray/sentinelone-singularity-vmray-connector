@@ -734,10 +734,11 @@ class SentinelOne:
             note += "IOC's:\n"
             ioc_note = []
             for key, value in sample_iocs.items():
-                if len(value) > 0:
-                    ioc_note.append(key.upper() + ": " + ", ".join(value))
-                else:
-                    ioc_note.append(key.upper() + ": -")
+                if key in self.config.NOTE.SELECTED_IOC_FIELDS:
+                    if len(value) > 0:
+                        ioc_note.append(key.upper() + ": " + ", ".join(value))
+                    else:
+                        ioc_note.append(key.upper() + ": -")
             note += "\n".join(ioc_note) + "\n\n"
 
         # Checking whether note is in the threat

@@ -92,6 +92,16 @@ class NOTE_SUBTYPES:
     IOC = "ioc"
 
 
+# SentinelOne Threat Note IOC field enum
+class NOTE_IOC_FIELDS:
+    MD5 = "md5"
+    SHA1 = "sha1"
+    SHA256 = "sha256"
+    IPV4 = "ipv4"
+    DNS = "domain"
+    URL = "url"
+
+
 class COLLECT_METHODS:
     THREAT = "threat"
     DEEP_VISIBILITY = "deep-visibility"
@@ -120,7 +130,7 @@ class SentinelOneConfig:
     SUBMISSION_CUSTOM_TAG_PROPERTY = SITE_PROPERTIES.SITE_NAME
 
     # Methods to be used to collect samples
-    SELECTED_COLLECT_METHODS = [COLLECT_METHODS.THREAT, COLLECT_METHODS.DEEP_VISIBILITY]
+    SELECTED_COLLECT_METHODS = [COLLECT_METHODS.THREAT]
 
     # API related configurations
     class API:
@@ -259,6 +269,10 @@ class SentinelOneConfig:
         # Selected subtypes for processing
         SELECTED_SUBTYPES = [NOTE_SUBTYPES.VERDICT, NOTE_SUBTYPES.VTI, NOTE_SUBTYPES.IOC]
 
+        # Selected ioc fields for processing
+        SELECTED_IOC_FIELDS = [NOTE_IOC_FIELDS.MD5, NOTE_IOC_FIELDS.SHA1, NOTE_IOC_FIELDS.SHA256, NOTE_IOC_FIELDS.IPV4,
+                               NOTE_IOC_FIELDS.DNS, NOTE_IOC_FIELDS.URL]
+
 
 # General Configuration
 class GeneralConfig:
@@ -292,6 +306,8 @@ IOC_FIELD_MAPPINGS = {
     "sha256": ["SHA256"],
 
     "domain": ["DNS"],
+
+    "url": ["URL"],
 
     "sha1": ["SHA1"],
 
