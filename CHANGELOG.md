@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.3 - 16.02.2023]
+### Added
+- Configuration parameter to unlock automatic report
+
 ## [1.2 - 19.09.2022]
 ### Added
 - Configuration parameter to filter sample collection methods
