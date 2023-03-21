@@ -121,7 +121,8 @@ def run():
         # we need to extract indicator values and import them to SentinelOne
         if sample_data["sample_verdict"] in GeneralConfig.SELECTED_VERDICTS:
             # If api key type is Verdict, unlocking reports.
-            vmray.unlock_reports(sample_data["sample_id"])
+            if vmray.config.AUTO_UNLOCK_REPORT:
+                vmray.unlock_reports(sample_data["sample_id"])
 
             # Retrieving and parsing indicators
             sample_iocs = vmray.get_sample_iocs(sample_data)
@@ -200,7 +201,8 @@ def run():
                 process_object = next((file for file in processes.values() if file['sha1'] == sample_data["sample_sha1hash"]), None)
 
                 # If api key type is Verdict, unlocking reports.
-                vmray.unlock_reports(sample_data["sample_id"])
+                if vmray.config.AUTO_UNLOCK_REPORT:
+                    vmray.unlock_reports(sample_data["sample_id"])
 
                 # Retrieving and parsing indicators
                 sample_iocs = vmray.get_sample_iocs(sample_data)

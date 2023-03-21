@@ -33,6 +33,9 @@ class VMRayConfig:
     # The connector will automatically unlock the entire report if the verdict is non-clean
     API_KEY = ""
 
+    # Unlock automatic report for Verdict of API key type
+    AUTO_UNLOCK_REPORT = False
+
     # VMRay REST API URL
     URL = "https://eu.cloud.vmray.com"
 
