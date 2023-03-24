@@ -11,10 +11,12 @@
     
 ## Overview
 
-This project aims to integrate SentinelOne Singularity XDR and VMRay Analyzer to enrich incidents and provide intel on detected threats. The connector collects threats and processes files, and query or submit these samples into VMRay Analyzer. After the submission, and following detonation it retrieves back
+This project aims to integrate SentinelOne Singularity XDR and VMRay Analyzer to enrich incidents and provide intel on detected threats. The connector collects threats and processes files, and query or submit these samples into VMRay Analyzer. After the submission, and following detonation it retrieves back:
+
  - Threat Classification
  - VMRay Threat Identifiers (VTIs)
  - IOCs 
+
 and adds them to the SentinelOne Threat Notes. It also enriches SentinelOne Singularity with IOCs retrieved from reports of VMRay Analyzer.
 
 Being configured to submit not only threats but all processes started on the endpoints protected by SentinelOne, the connector allows you to build an extra line of defense and reliably detect even yet unknown threats.
