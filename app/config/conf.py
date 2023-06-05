@@ -63,6 +63,12 @@ class VMRayConfig:
     # Connector Version
     CONNECTOR_VERSION = "1.0"
 
+    # Resubmission status which has been already analyzed by VMRay
+    RESUBMIT = False
+
+    # Selected verdicts to resubmit evidences
+    RESUBMISSION_VERDICTS = [VERDICT.MALICIOUS, VERDICT.SUSPICIOUS]
+
 
 # Sample Types
 class SAMPLE_TYPE:
@@ -110,6 +116,11 @@ class COLLECT_METHODS:
     DEEP_VISIBILITY = "deep-visibility"
 
 
+class DOWNLOAD_METHODS:
+    CLOUD = "download-cloud"
+    FETCH_FROM_AGENT = "fetch-file"
+
+
 # SentinelOne Configuration
 class SentinelOneConfig:
     # Alert polling time span as seconds
@@ -126,7 +137,7 @@ class SentinelOneConfig:
     SITE_IDS = []
 
     # Used for zip file password
-    ZIP_PASSWORD = "SentinelEvidenceFile.!"
+    ZIP_PASSWORD = "S1BinaryVault"
 
     # Custom Tag Property for VMRay Submission
     # To be able to use this you need to change the SEND_CUSTOM_SUBMISSION_TAGS property above to True
@@ -175,6 +186,9 @@ class SentinelOneConfig:
 
         # Download directory path
         ABSOLUTE_PATH = pathlib.Path(__file__).parent.parent.resolve() / DIR
+
+        # Method to be used to download samples
+        EVIDENCE_DOWNLOAD_METHOD = DOWNLOAD_METHODS.CLOUD
 
     # Process related configurations
     class PROCESS:

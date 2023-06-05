@@ -9,7 +9,7 @@ import json
 import time
 
 from app.config.conf import SentinelOneConfig, ACTIVITY_TYPE, SAMPLE_TYPE, IOC_FIELD_MAPPINGS, REQUEST_METHOD, \
-    NOTE_SUBTYPES
+    NOTE_SUBTYPES, DOWNLOAD_METHODS
 
 
 class SentinelOne:
@@ -241,6 +241,7 @@ class SentinelOne:
                     threat_details["id"] = threat["id"]
                     threat_details["agent_id"] = threat["agentRealtimeInfo"]["agentId"]
                     threat_details["download_url"] = ""
+                    threat_details["download_method"] = ""
                     threat_details["sample_type"] = SAMPLE_TYPE.THREAT
                     threat_details["site_id"] = threat["agentRealtimeInfo"]["siteId"]
                     threat_details["site_name"] = threat["agentRealtimeInfo"]["siteName"]
@@ -259,7 +260,7 @@ class SentinelOne:
 
     def fetch_request_evidence_file(self, evidences):
         """
-        Fetch request to generaet evidence files' download links
+        Fetch request to generate evidence files' download links
         https://usea1-partners.sentinelone.net/api-doc/api-details?category=threats&api=fetch-threat-file
         https://usea1-partners.sentinelone.net/api-doc/api-details?category=activities&api=get-activities
         :param evidences: list of evidence objects
@@ -310,6 +311,8 @@ class SentinelOne:
                         activity = result[0]
                         # set download_url to evidence
                         evidence["download_url"] = self.config.API.URL + activity["data"]["downloadUrl"]
+                        # set download_method to evidence
+                        evidence["download_method"] = DOWNLOAD_METHODS.FETCH_FROM_AGENT
                         break
 
                     # Skip after timeout seconds if the server is not online or file is not returning.
@@ -318,6 +321,31 @@ class SentinelOne:
                         break
                     else:
                         time.sleep(self.config.API.FETCH_FILE_TIME_SPAN)
+        return evidences
+
+    def fetch_request_evidence_file_from_cloud(self, evidences):
+        """
+        Fetch request to generaet evidence files' download links
+        https://usea1-partners.sentinelone.net/api-doc/api-details?category=threats&api=download-from-cloud
+        :param evidences: list of evidence objects
+        :exception: when evidence download link is not generated
+        :return evidences: list of evidence objects with download link
+        """
+        self.log.info("Download link generating for %d evidences" % len(evidences))
+
+        for evidence_id, evidence in evidences.items():
+            self.log.info("Sending request to fetch evidence file %s" % evidence["sha1"])
+
+            request_path = "/threats/%s/download-from-cloud" % evidence_id
+            result = self.send_request(REQUEST_METHOD.GET, request_path)
+
+            if result and 'downloadUrl' in result:
+                # set download_url to evidence
+                evidence["download_url"] = result["downloadUrl"]
+                # set download_method to evidence
+                evidence["download_method"] = DOWNLOAD_METHODS.CLOUD
+            else:
+                self.log.error("Failed to fetch file request")
         return evidences
 
     def get_process_from_dv(self):
@@ -413,6 +441,7 @@ class SentinelOne:
                                         "site_name": process_data["siteName"],
                                         "custom_tag": process_data[self.config.SUBMISSION_CUSTOM_TAG_PROPERTY],
                                         "download_url": "",
+                                        "download_method": "",
                                         "sample_type": SAMPLE_TYPE.PROCESS
                                     }
                         except Exception as err:
@@ -474,6 +503,8 @@ class SentinelOne:
                         activity = result[0]
                         # set download_url to process
                         process["download_url"] = self.config.API.URL + activity["data"]["downloadUrl"]
+                        # set download_method to process
+                        process["download_method"] = DOWNLOAD_METHODS.FETCH_FROM_AGENT
 
                         self.log.info("File fetched successfully %s" % process["sha1"])
                         break
@@ -505,12 +536,21 @@ class SentinelOne:
                 # try-except block for handling download request errors
                 try:
                     # download file and store it in response object
-                    response = requests.get(sample["download_url"], stream=True, headers=self.headers)
+                    if sample["download_method"] == DOWNLOAD_METHODS.CLOUD:
+                        response = requests.get(sample["download_url"])
+                    else:
+                        response = requests.get(sample["download_url"], stream=True, headers=self.headers)
+
+                    # Check if the file was downloaded successfully
+                    if response.ok:
+                        self.log.info("File %s downloaded successfully." % sample["sha1"])
+                    else:
+                        self.log.info("Failed to download file %s. Status Code: %s" % (sample["sha1"], response.status_code))
+                        continue
 
                     # initialize path variables for downloaded file
                     file_path = self.config.DOWNLOAD.ABSOLUTE_PATH / pathlib.Path(sample["sha1"] + ".zip")
                     unzipped_file_path = self.config.DOWNLOAD.ABSOLUTE_PATH / pathlib.Path(sample["sha1"])
-                    self.log.info("File %s downloaded successfully." % sample["sha1"])
 
                     # try-except block for handling file write errors
                     try:
