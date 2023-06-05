@@ -44,25 +44,43 @@ def run():
         # Dict of evidences which need to be downloaded from SentinelOne
         download_evidences = {}
 
+        # Dict of evidences which found on VMRay database but will be resubmitted
+        resubmit_evidences = {}
+
         # Retrieving evidences from SentinelOne
         evidences = sentinel.get_evidences_from_threats()
 
-        # Checking hash values in VMRay database, if evidence is found on VMRay no need to submit again
+        # Checking hash values in VMRay database
         for evidence_id, evidence in evidences.items():
             sample = vmray.get_sample(evidence["sha1"])
             evidence["sample"] = sample
             evidence_sha1_values.add(evidence["sha1"])
             if sample is not None:
-                # if evidence found on VMRay we need to store sample metadata in Evidence object
-                found_evidences[evidence_id] = evidence
+                sample_data = vmray.parse_sample_data(sample)
+
+                # if resubmission is active and sample verdicts in configured resubmission verdicts
+                if vmray.config.RESUBMIT and sample_data['sample_verdict'] in vmray.config.RESUBMISSION_VERDICTS:
+                    # File added into resubmit samples and re-analyzed
+                    resubmit_evidences[evidence_id] = evidence
+                # or if evidence is found on VMRay no need to submit again
+                else:
+                    # if evidence found on VMRay we need to store sample metadata in Evidence object
+                    found_evidences[evidence_id] = evidence
             else:
                 download_evidences[evidence_id] = evidence
 
         log.info("%d evidences found on VMRay database" % len(found_evidences))
+        log.info("%d evidences found on VMRay database, but will be resubmitted" % len(resubmit_evidences))
         log.info("%d evidences need to be downloaded and submitted" % len(download_evidences))
 
         # Fetch request to generate evidence files' download link from SentinelOne
-        fetched_evidences = sentinel.fetch_request_evidence_file(download_evidences)
+        # if evidence download method is cloud generate link from cloud endpoint
+        if sentinel.config.DOWNLOAD.EVIDENCE_DOWNLOAD_METHOD == DOWNLOAD_METHODS.CLOUD:
+            fetched_evidences = sentinel.fetch_request_evidence_file_from_cloud({**download_evidences, **resubmit_evidences})
+        # if evidence download method is fetch-file generate link from agent
+        else:
+            fetched_evidences = sentinel.fetch_request_evidence_file({**download_evidences, **resubmit_evidences})
+
         # Download evidence files from SentinelOne
         downloaded_evidences = sentinel.download_samples(fetched_evidences)
         log.info("%d evidence file downloaded successfully" % len(downloaded_evidences))
@@ -81,6 +99,9 @@ def run():
         # Dict of processes which need to be downloaded from SentinelOne
         download_processes = {}
 
+        # Dict of processes which found on VMRay database but will be resubmitted
+        resubmit_processes = {}
+
         # Retrieving processes from SentinelOne
         processes = sentinel.get_process_from_dv()
 
@@ -91,16 +112,25 @@ def run():
                 sample = vmray.get_sample(sha1)
                 process["sample"] = sample
                 if sample is not None:
-                    # if process file found on VMRay we need store sample metadata in Process object
-                    found_processes[sha1] = process
+                    sample_data = vmray.parse_sample_data(sample)
+
+                    # if resubmission is active and sample verdicts in configured resubmission verdicts
+                    if vmray.config.RESUBMIT and sample_data['sample_verdict'] in vmray.config.RESUBMISSION_VERDICTS:
+                        # File added into resubmit samples and re-analyzed
+                        resubmit_processes[sha1] = process
+                    # or if process is found on VMRay no need to submit again
+                    else:
+                        # if process file found on VMRay we need store sample metadata in Process object
+                        found_processes[sha1] = process
                 else:
                     download_processes[sha1] = process
 
         log.info("%d process file found on VMRay database" % len(found_processes))
+        log.info("%d process file found on VMRay database, but will be resubmitted" % len(resubmit_processes))
         log.info("%d process file need to be downloaded and submitted" % len(download_processes))
 
         # Fetch request to generate process files download link from SentinelOne
-        fetched_processes = sentinel.fetch_request_process_file(download_processes)
+        fetched_processes = sentinel.fetch_request_process_file({**download_processes, **found_processes})
         # Download process files from SentinelOne
         downloaded_processes = sentinel.download_samples(fetched_processes)
         log.info("%d process file downloaded successfully" % len(downloaded_processes))
@@ -276,7 +306,7 @@ def run():
 if __name__ == "__main__":
     from app.lib.SentinelOne import SentinelOne
     from app.lib.VMRay import VMRay
-    from app.config.conf import GeneralConfig, SentinelOneConfig
+    from app.config.conf import GeneralConfig, SentinelOneConfig, DOWNLOAD_METHODS
     from app.config.conf import RUNTIME_MODE, SAMPLE_TYPE, MITIGATION_TYPE, COLLECT_METHODS
 
     if GeneralConfig.RUNTIME_MODE == RUNTIME_MODE.DOCKER:

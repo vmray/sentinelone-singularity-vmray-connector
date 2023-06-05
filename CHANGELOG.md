@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4 - 05.06.2023]
+### Added
+- Configuration parameter to resubmit a known file based on the verdict
+- Configuration parameter to evidence file download from cloud
+
+### Changed
+- Default values in README.md updated with conf.py
+
 ## [1.3 - 16.02.2023]
 ### Added
 - Configuration parameter to unlock automatic report
