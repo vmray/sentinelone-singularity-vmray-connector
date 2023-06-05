@@ -95,7 +95,7 @@ After running the Docker container you can see connector logs in the log directo
 | Configuration Item                   | Description                                                                             | Default                                               |
 |:-------------------------------------|:----------------------------------------------------------------------------------------|:------------------------------------------------------|
 | `API_KEY`                            | API Key                                                                                 |                                                       |
-| `AUTO_UNLOCK_REPORT`                 | Unlock automatic report for Verdict of API key type                                     | `False`                                               |
+| `AUTO_UNLOCK_REPORT`                 | Unlock reports automatically for Verdict API                                            | `False`                                               |
 | `URL`                                | URL of VMRay instance                                                                   | `https://eu.cloud.vmray.com`                          |
 | `SSL_VERIFY`                         | Enable or disable certificate verification [`True`/`False`]                             | `True`                                                |
 | `SUBMISSION_COMMENT`                 | Comment for submitted samples                                                           | `Sample from VMRay Analyzer - SentinelOne Connector`  |
@@ -104,8 +104,8 @@ After running the Docker container you can see connector logs in the log directo
 | `ANALYSIS_TIMEOUT`                   | Timeout for submission analyses as seconds                                              | `120`                                                 |
 | `ANALYSIS_JOB_TIMEOUT`               | Timeout for analysis job in wait_submissions as seconds                                 | `900`                                                 |
 | `CONNECTOR_NAME`                     | Connector Name                                                                          | `SentinelOne`                                         |
-| `CONNECTOR_VERSION`                  | Connector Version                                                                       | `1.0`                                                 |
-| `RESUBMIT`                           | Resubmission status which has been already analyzed by VMRay [`True`/`False`]           | `False`                                               |
+| `CONNECTOR_VERSION`                  | Connector Version                                                                       | `1.4`                                                 |
+| `RESUBMIT`                           | Resubmission flag for samples which has been already analyzed by VMRay [`True`/`False`] | `False`                                               |
 | `RESUBMISSION_VERDICTS`              | Selected verdicts to resubmit evidences                                                 | [`suspicious`,`malicious`]                            |
 
 ## SentinelOne Configurations
