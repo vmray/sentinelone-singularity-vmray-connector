@@ -159,6 +159,8 @@ Note: API Token expiration period is 6 months. [More details](https://usea1-part
 | `SUBMISSION_CUSTOM_TAG_PROPERTY`                     | Custom tag property for VMRay submission                                 | `siteName`                                    |
 | `SELECTED_COLLECT_METHODS`                           | Methods to be used to collect samples                                    | [`threat`]                                    |
 
+**Note:** To download threat files from Cloud, you must have a site with Singularity™ Complete SKU. [More details](https://usea1-partners.sentinelone.net/docs/en/binary-vault.html)
+
 ## General Connector Configurations
 
 - Edit the `GeneralConfig` class in [conf.py](app/config/conf.py) file.
