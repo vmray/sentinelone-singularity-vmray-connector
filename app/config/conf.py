@@ -18,6 +18,7 @@ class REQUEST_METHOD:
 class VERDICT:
     SUSPICIOUS = "suspicious"
     MALICIOUS = "malicious"
+    CLEAN = "clean"
 
 
 # VMRay job status

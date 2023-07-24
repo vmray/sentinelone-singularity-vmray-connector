@@ -9,7 +9,7 @@ import json
 import time
 
 from app.config.conf import SentinelOneConfig, ACTIVITY_TYPE, SAMPLE_TYPE, IOC_FIELD_MAPPINGS, REQUEST_METHOD, \
-    NOTE_SUBTYPES, DOWNLOAD_METHODS
+    NOTE_SUBTYPES, DOWNLOAD_METHODS, VERDICT
 
 
 class SentinelOne:
@@ -62,12 +62,13 @@ class SentinelOne:
             self.log.error(err)
             raise
 
-    def send_request(self, method, path, params=None):
+    def send_request(self, method, path, params=None, return_pagination=False):
         """
         Send request to the SentinelOne API
         :param method: request method type
         :param path: request path
         :param params: request parameters
+        :param return_pagination: return pagination value
         :exception: when response are not properly retrieved
         :return result: response values
         """
@@ -98,7 +99,10 @@ class SentinelOne:
                 # value key in json response contains accounts
                 # checking the "data" key as a second error control
                 if "data" in json_response:
-                    return json_response["data"]
+                    if return_pagination:
+                        return json_response["data"], json_response.get("pagination", {})
+                    else:
+                        return json_response["data"]
                 else:
                     self.log.error("Failed to parse api response - Error: value key not found in dict.")
         except Exception as err:
@@ -144,7 +148,8 @@ class SentinelOne:
         """
         request_path = "/sites"
         params = {
-            "accountId": self.config.ACCOUNT_ID
+            "accountId": self.config.ACCOUNT_ID,
+            "limit": self.config.API.MAX_DATA_COUNT
         }
 
         if len(self.config.SITE_IDS) > 0:
@@ -162,18 +167,27 @@ class SentinelOne:
                 self.log.error("Site IDs are not valid.")
                 raise Exception("Site IDs are not valid.")
         else:
-            result = self.send_request(REQUEST_METHOD.GET, request_path, params)
-
             site_ids = []
 
-            if result and "sites" in result and len(result["sites"]) > 0:
-                for s1_site in result["sites"]:
-                    site_ids.append(s1_site["id"])
-                self.config.SITE_IDS = site_ids
-                self.log.info("Successfully retrieved sites")
-            else:
+            is_iterable = True
+            while is_iterable:
+                result, pagination = self.send_request(REQUEST_METHOD.GET, request_path, params, return_pagination=True)
+
+                is_iterable = pagination.get("nextCursor")
+
+                if result and "sites" in result and len(result["sites"]) > 0:
+                    for s1_site in result["sites"]:
+                        site_ids.append(s1_site["id"])
+
+                    if is_iterable:
+                        params["cursor"] = pagination["nextCursor"]
+
+            if len(site_ids) == 0:
                 self.log.error("Site(s) not found.")
                 raise Exception("Site(s) not found.")
+
+            self.config.SITE_IDS = site_ids
+            self.log.info("Successfully retrieved sites")
 
     def is_agent_active(self, agent_id):
         """
@@ -219,43 +233,51 @@ class SentinelOne:
             "siteIds": ",".join(self.config.SITE_IDS),
             "sortBy": "createdAt",
             "sortOrder": "desc",
-            "skip": 0,
             "limit": self.config.API.MAX_DATA_COUNT,
             "createdAt__gt": start_time
         }
 
         request_path = "/threats"
-        result = self.send_request(REQUEST_METHOD.GET, request_path, params)
 
         # defining initial dictionary which stores evidence objects
         evidences = {}
 
-        if result:
-            self.log.info("Successfully retrieved %d threats" % (len(result)))
+        is_iterable = True
+        while is_iterable:
+            result, pagination = self.send_request(REQUEST_METHOD.GET, request_path, params, return_pagination=True)
 
-            # iterating threats and retrieving evidence data to create Evidence objects
-            for threat in result:
-                # try-except block for handling dictionary key related exceptions
-                try:
-                    threat_details = threat["threatInfo"]
-                    threat_details["id"] = threat["id"]
-                    threat_details["agent_id"] = threat["agentRealtimeInfo"]["agentId"]
-                    threat_details["download_url"] = ""
-                    threat_details["download_method"] = ""
-                    threat_details["sample_type"] = SAMPLE_TYPE.THREAT
-                    threat_details["site_id"] = threat["agentRealtimeInfo"]["siteId"]
-                    threat_details["site_name"] = threat["agentRealtimeInfo"]["siteName"]
-                    threat_details["custom_tag"] = threat["agentRealtimeInfo"][self.config.SUBMISSION_CUSTOM_TAG_PROPERTY]
-                    threat_id = threat["id"]
+            is_iterable = pagination.get("nextCursor")
 
-                    # if threat id is empty or none, continue
-                    if threat_id is not None and threat_id != "":
-                        # add threat information to dictionary if evidence dictionary doesn't have threat id
-                        if threat_id not in evidences.keys():
-                            evidences[threat_id] = threat_details
-                except Exception as err:
-                    self.log.warning("Failed to parse threat object - Error: %s" % err)
-            self.log.info("Successfully retrieved %d evidences from %d threats" % (len(evidences), len(result)))
+            if result:
+                self.log.info("Successfully retrieved %d threats" % (len(result)))
+
+                # iterating threats and retrieving evidence data to create Evidence objects
+                for threat in result:
+                    # try-except block for handling dictionary key related exceptions
+                    try:
+                        threat_details = threat["threatInfo"]
+                        threat_details["id"] = threat["id"]
+                        threat_details["agent_id"] = threat["agentRealtimeInfo"]["agentId"]
+                        threat_details["download_url"] = ""
+                        threat_details["download_method"] = ""
+                        threat_details["sample_type"] = SAMPLE_TYPE.THREAT
+                        threat_details["site_id"] = threat["agentRealtimeInfo"]["siteId"]
+                        threat_details["site_name"] = threat["agentRealtimeInfo"]["siteName"]
+                        threat_details["custom_tag"] = threat["agentRealtimeInfo"][self.config.SUBMISSION_CUSTOM_TAG_PROPERTY]
+                        threat_id = threat["id"]
+
+                        # if threat id is empty or none, continue
+                        if threat_id is not None and threat_id != "":
+                            # add threat information to dictionary if evidence dictionary doesn't have threat id
+                            if threat_id not in evidences.keys():
+                                evidences[threat_id] = threat_details
+                    except Exception as err:
+                        self.log.warning("Failed to parse threat object - Error: %s" % err)
+
+                if is_iterable:
+                    params["cursor"] = pagination["nextCursor"]
+
+                self.log.info("Successfully retrieved %d evidences from %d threats" % (len(evidences), len(result)))
         return evidences
 
     def fetch_request_evidence_file(self, evidences):
@@ -611,20 +633,27 @@ class SentinelOne:
         params = {
             "sortBy": "creationTime",
             "sortOrder": "desc",
-            "skip": 0,
             "limit": self.config.API.MAX_DATA_COUNT,
         }
 
         request_path = "/threat-intelligence/iocs"
-        result = self.send_request(REQUEST_METHOD.GET, request_path, params)
 
         # defining initial set for storing indicator values
         indicators = set()
 
-        if result:
-            for indicator in result:
-                # adding only value to check duplicates easily
-                indicators.add(indicator["value"])
+        is_iterable = True
+        while is_iterable:
+            result, pagination = self.send_request(REQUEST_METHOD.GET, request_path, params, return_pagination=True)
+
+            is_iterable = pagination.get("nextCursor")
+
+            if result:
+                for indicator in result:
+                    # adding only value to check duplicates easily
+                    indicators.add(indicator["value"])
+
+                if is_iterable:
+                    params["cursor"] = pagination["nextCursor"]
 
         self.log.info("%d unique indicator retrieved in total" % (len(indicators)))
         return indicators
@@ -709,26 +738,33 @@ class SentinelOne:
         params = {
             "sortBy": "createdAt",
             "sortOrder": "desc",
-            "skip": 0,
             "limit": self.config.API.MAX_DATA_COUNT,
         }
 
         request_path = "/threats/%s/notes" % threat_id
-        result = self.send_request(REQUEST_METHOD.GET, request_path, params)
 
         # defining initial dictionary which stores notes objects
         notes = {}
 
-        if result:
-            # iterating threats and retrieving evidence data to create Note objects
-            for note in result:
-                # try-except block for handling dictionary key related exceptions
-                try:
-                    note_text = note["text"]
-                    note_base64 = base64.b64encode(note_text.encode('ascii'))
-                    notes[note_base64] = note_text
-                except Exception as err:
-                    self.log.warning("Failed to parse note object - Error: %s" % err)
+        is_iterable = True
+        while is_iterable:
+            result, pagination = self.send_request(REQUEST_METHOD.GET, request_path, params, return_pagination=True)
+
+            is_iterable = pagination.get("nextCursor")
+
+            if result:
+                # iterating threats and retrieving evidence data to create Note objects
+                for note in result:
+                    # try-except block for handling dictionary key related exceptions
+                    try:
+                        note_text = note["text"]
+                        note_base64 = base64.b64encode(note_text.encode('ascii'))
+                        notes[note_base64] = note_text
+                    except Exception as err:
+                        self.log.warning("Failed to parse note object - Error: %s" % err)
+
+                if is_iterable:
+                    params["cursor"] = pagination["nextCursor"]
         return notes
 
     def create_note(self, threat_id, sample_data, sample_vtis, sample_iocs):
