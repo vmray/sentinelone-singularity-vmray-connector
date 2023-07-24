@@ -187,6 +187,10 @@ class SentinelOneConfig:
         # Max limit = 1.000
         MAX_DATA_COUNT = 1000
 
+        # Max deep visibility data count per request
+        # Max limit = 20.000
+        MAX_DV_DATA_COUNT = 20000
+
         # Fetch file timeout (seconds)
         FETCH_FILE_TIMEOUT = 60
 

@@ -394,7 +394,7 @@ class SentinelOne:
             "fromDate": start_time,
             "toDate": end_time,
             "skip": 0,
-            "limit": self.config.API.MAX_DATA_COUNT,
+            "limit": self.config.API.MAX_DV_DATA_COUNT,
             "queryType": [
                 "events"
             ],
