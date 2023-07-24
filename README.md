@@ -128,7 +128,7 @@ Note: API Token expiration period is 6 months. [More details](https://usea1-part
 | `API` > `FETCH_FILE_TIMEOUT`                         | Timeout for fetching a sample file in seconds                            | `60`                                          |
 | `API` > `FETCH_FILE_TIME_SPAN`                       | Time span for each fetched sample file in seconds                        | `10`                                          |
 | `DOWNLOAD` > `DIR`                                   | Directory name to store downloaded samples                               | `downloads`                                   |
-| `DOWNLOAD` > `EVIDENCE_DOWNLOAD_METHOD`              | Method to be used to download samples                                    | `download-cloud`                              |
+| `DOWNLOAD` > `EVIDENCE_DOWNLOAD_METHOD`              | Method to be used to download samples                                    | `fetch-file`                                  |
 | `PROCESS` > `FILTER_QUERY`                           | Filter Query to get processes                                            | `ObjectType = "Process"`                      |
 | `INDICATOR` > `NAME`                                 | Name for indicators which were created by connector                      | `Indicator based on a VMRay Analyzer Report`  |
 | `INDICATOR` > `DESCRIPTION`                          | Description for indicators which were created by connector               | `Indicator based on a VMRay Analyzer Report`  |

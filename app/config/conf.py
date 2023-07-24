@@ -188,7 +188,7 @@ class SentinelOneConfig:
         ABSOLUTE_PATH = pathlib.Path(__file__).parent.parent.resolve() / DIR
 
         # Method to be used to download samples
-        EVIDENCE_DOWNLOAD_METHOD = DOWNLOAD_METHODS.CLOUD
+        EVIDENCE_DOWNLOAD_METHOD = DOWNLOAD_METHODS.FETCH_FROM_AGENT
 
     # Process related configurations
     class PROCESS:
