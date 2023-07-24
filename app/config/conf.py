@@ -160,6 +160,9 @@ class SentinelOneConfig:
     # Methods to be used to collect samples
     SELECTED_COLLECT_METHODS = [COLLECT_METHODS.THREAT]
 
+    # Methods to be used to filter threat files by confidence levels
+    SELECTED_CONFIDENCE_LEVELS = [THREAT_CONFIDENCE_LEVELS.MALICIOUS, THREAT_CONFIDENCE_LEVELS.SUSPICIOUS, THREAT_CONFIDENCE_LEVELS.OTHERS]
+
     # API related configurations
     class API:
         # SentinelOne API, API Token

@@ -231,6 +231,7 @@ class SentinelOne:
         params = {
             "accountIds": self.config.ACCOUNT_ID,
             "siteIds": ",".join(self.config.SITE_IDS),
+            "confidenceLevels": ",".join(self.config.SELECTED_CONFIDENCE_LEVELS),
             "sortBy": "createdAt",
             "sortOrder": "desc",
             "limit": self.config.API.MAX_DATA_COUNT,
