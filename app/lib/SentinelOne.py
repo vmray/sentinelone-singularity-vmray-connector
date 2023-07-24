@@ -792,30 +792,34 @@ class SentinelOne:
         note += "Sample Url:\n"
         note += sample_data["sample_webif_url"] + "\n\n"
 
-        # adding VMRay Analyzer sample classifications
-        note += "Classifications:\n"
-        note += "\n".join(sample_data["sample_classifications"]) + "\n\n"
+        # if sample is clean and automatic update analyst verdict enabled, adding false positive verdict note
+        if sample_data["sample_verdict"] == VERDICT.CLEAN and self.config.THREAT.AUTO_UPDATE_FALSE_POSITIVE_VERDICT.ACTIVE:
+            note += "%s\n\n" % self.config.THREAT.AUTO_UPDATE_FALSE_POSITIVE_VERDICT.DESCRIPTION
+        else:
+            # adding VMRay Analyzer sample classifications
+            note += "Classifications:\n"
+            note += "\n".join(sample_data["sample_classifications"]) + "\n\n"
 
-        # adding VMRay Analyzer threat names
-        note += "Threat Names:\n"
-        note += "\n".join(sample_data["sample_threat_names"]) + "\n\n"
+            # adding VMRay Analyzer threat names
+            note += "Threat Names:\n"
+            note += "\n".join(sample_data["sample_threat_names"]) + "\n\n"
 
-        # adding VMRay Analyzer VTI's
-        if NOTE_SUBTYPES.VTI in self.config.NOTE.SELECTED_SUBTYPES:
-            note += "VTI's:\n"
-            note += "\n".join(list({vti['operation']: vti for vti in sample_vtis})) + "\n\n"
+            # adding VMRay Analyzer VTI's
+            if NOTE_SUBTYPES.VTI in self.config.NOTE.SELECTED_SUBTYPES:
+                note += "VTI's:\n"
+                note += "\n".join(list({vti['operation']: vti for vti in sample_vtis})) + "\n\n"
 
-        # adding VMRay Analyzer IOC's
-        if NOTE_SUBTYPES.IOC in self.config.NOTE.SELECTED_SUBTYPES:
-            note += "IOC's:\n"
-            ioc_note = []
-            for key, value in sample_iocs.items():
-                if key in self.config.NOTE.SELECTED_IOC_FIELDS:
-                    if len(value) > 0:
-                        ioc_note.append(key.upper() + ": " + ", ".join(value))
-                    else:
-                        ioc_note.append(key.upper() + ": -")
-            note += "\n".join(ioc_note) + "\n\n"
+            # adding VMRay Analyzer IOC's
+            if NOTE_SUBTYPES.IOC in self.config.NOTE.SELECTED_SUBTYPES:
+                note += "IOC's:\n"
+                ioc_note = []
+                for key, value in sample_iocs.items():
+                    if key in self.config.NOTE.SELECTED_IOC_FIELDS:
+                        if len(value) > 0:
+                            ioc_note.append(key.upper() + ": " + ", ".join(value))
+                        else:
+                            ioc_note.append(key.upper() + ": -")
+                note += "\n".join(ioc_note) + "\n\n"
 
         # Checking whether note is in the threat
         threat_notes = self.get_notes(threat_id)
@@ -1060,3 +1064,30 @@ class SentinelOne:
             self.log.debug("Agent %s start disk scan successfully" % agent_id)
         else:
             self.log.error("Failed agent(%s) disk scan" % agent_id)
+
+    def update_analyst_verdict(self, threat_id, verdict_type):
+        """
+        Update analyst verdict on threat
+        https://usea1-partners.sentinelone.net/api-doc/api-details?category=threats&api=update-threat-analyst-verdict
+        :param threat_id: id value of threat
+        :param verdict_type: type value of verdict
+        :return: void
+        """
+        params = {
+            "data": {
+                "analystVerdict": verdict_type
+            },
+            "filter": {
+                "accountIds": [self.config.ACCOUNT_ID],
+                "siteIds": self.config.SITE_IDS,
+                "collectionIds": [threat_id]
+            }
+        }
+
+        request_path = "/threats/analyst-verdict"
+        result = self.send_request(REQUEST_METHOD.POST, request_path, params)
+
+        if result and "affected" in result and result["affected"] > 0:
+            self.log.debug("Threat %s verdict(%s) update is successfully" % (threat_id, verdict_type))
+        else:
+            self.log.error("Threat %s verdict(%s) update is not successful" % (threat_id, verdict_type))

@@ -117,6 +117,19 @@ class COLLECT_METHODS:
     DEEP_VISIBILITY = "deep-visibility"
 
 
+class THREAT_CONFIDENCE_LEVELS:
+    MALICIOUS = "malicious"
+    SUSPICIOUS = "suspicious"
+    OTHERS = "n/a"
+
+
+class ANALYST_VERDICTS:
+    FALSE_POSITIVE = "false_positive"
+    TRUE_POSITIVE = "true_positive"
+    SUSPICIOUS = "suspicious"
+    UNDEFINED = "undefined"
+
+
 class DOWNLOAD_METHODS:
     CLOUD = "download-cloud"
     FETCH_FROM_AGENT = "fetch-file"
@@ -290,6 +303,19 @@ class SentinelOneConfig:
         # Selected ioc fields for processing
         SELECTED_IOC_FIELDS = [NOTE_IOC_FIELDS.MD5, NOTE_IOC_FIELDS.SHA1, NOTE_IOC_FIELDS.SHA256, NOTE_IOC_FIELDS.IPV4,
                                NOTE_IOC_FIELDS.DNS, NOTE_IOC_FIELDS.URL]
+
+    # Threat related configurations
+    class THREAT:
+        # Automatic analyst verdict update as False Positive for clean samples
+        class AUTO_UPDATE_FALSE_POSITIVE_VERDICT:
+            # Automated update verdict
+            ACTIVE = False
+
+            # Selected verdicts automatically update threat analyst verdict
+            VERDICTS = [THREAT_CONFIDENCE_LEVELS.MALICIOUS, THREAT_CONFIDENCE_LEVELS.SUSPICIOUS]
+
+            # Description for threat note which created by connector
+            DESCRIPTION = "Marked as False Positive because marked as clean by VMRay"
 
 
 # General Configuration
