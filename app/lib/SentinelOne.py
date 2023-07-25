@@ -1081,7 +1081,7 @@ class SentinelOne:
             "filter": {
                 "accountIds": [self.config.ACCOUNT_ID],
                 "siteIds": self.config.SITE_IDS,
-                "collectionIds": [threat_id]
+                "ids": [threat_id]
             }
         }
 
