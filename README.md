@@ -1,6 +1,6 @@
 # VMRay Analyzer Connector for SentinelOne
 
-**Latest Version:** 1.4 - **Release Date:** June 5, 2023
+**Latest Version:** 1.5 - **Release Date:** July 25, 2023
 
 <p align="center">
   <img src="app/imgs/vmray.png" alt="drawing" width="430"/>
@@ -118,46 +118,53 @@ Note: API Token expiration period is 6 months. [More details](https://usea1-part
 
 - Edit the 'SentinelOneConfig' class in [conf.py](app/config/conf.py) file.
 
-| Configuration Item                                   | Description                                                              | Default                                       |
-|:-----------------------------------------------------|:-------------------------------------------------------------------------|:----------------------------------------------|
-| `API` > `API_TOKEN`                                  | SentinelOne API Token                                                    |                                               |
-| `API` > `HOSTNAME_URL`                               | Hostname to access SentinelOne                                           | `https://usea1-partners.sentinelone.net`      |
-| `API` > `API_PREFIX`                                 | API Prefix to create SentinelOne API URL                                 | `web/api/v2.1`                                |
-| `API` > `USER_AGENT`                                 | User-Agent value to use for SentinelOne                                  | `S1-VMRayAnalyzer-Connector`                  |
-| `API` > `MAX_DATA_COUNT`                             | Maximum data count that could be fetched in each request                 | `1000`                                        |
-| `API` > `FETCH_FILE_TIMEOUT`                         | Timeout for fetching a sample file in seconds                            | `60`                                          |
-| `API` > `FETCH_FILE_TIME_SPAN`                       | Time span for each fetched sample file in seconds                        | `10`                                          |
-| `DOWNLOAD` > `DIR`                                   | Directory name to store downloaded samples                               | `downloads`                                   |
-| `DOWNLOAD` > `EVIDENCE_DOWNLOAD_METHOD`              | Method to be used to download samples                                    | `download-cloud`                              |
-| `PROCESS` > `FILTER_QUERY`                           | Filter Query to get processes                                            | `ObjectType = "Process"`                      |
-| `INDICATOR` > `NAME`                                 | Name for indicators which were created by connector                      | `Indicator based on a VMRay Analyzer Report`  |
-| `INDICATOR` > `DESCRIPTION`                          | Description for indicators which were created by connector               | `Indicator based on a VMRay Analyzer Report`  |
-| `INDICATOR` > `SOURCE`                               | Source for indicators which were created by connector                    | `VMRay`                                       |
-| `BLACKLIST` > `AUTO_ADD_GLOBAL` > `ACTIVE`           | Automated add to global blacklist with SHA1 hash values [`True`/`False`] | `False`                                       |
-| `BLACKLIST` > `AUTO_ADD_GLOBAL` > `VERDICTS`         | Selected verdicts to add to global blacklist automatically               | [`malicious`]                                 |
-| `BLACKLIST` > `AUTO_ADD_GLOBAL` > `DESCRIPTION`      | Description for added to global blacklist automatically                  | `Reported from VMRay Analyzer`                |
-| `BLACKLIST` > `AUTO_ADD_THREAT` > `ACTIVE`           | Automated add to threat blacklist with SHA1 hash values [`True`/`False`] | `False`                                       |
-| `BLACKLIST` > `AUTO_ADD_THEAT` > `VERDICTS`          | Selected verdicts to add to threat blacklist automatically               | [`malicious`]                                 |
-| `BLACKLIST` > `AUTO_ADD_THREAT` > `DESCRIPTION`      | Description for added to threat blacklist automatically                  | `Reported from VMRay Analyzer`                |
-| `BLACKLIST` > `AUTO_ADD_WITH_DV` > `ACTIVE`          | Automated add to blacklist with SHA1 hash values [`True`/`False`]        | `False`                                       |
-| `BLACKLIST` > `AUTO_ADD_WITH_DV` > `VERDICTS`        | Selected verdicts to add to blacklist with deep visibility automatically | [`malicious`]                                 |
-| `ACTION` > `AUTO_KILL` > `ACTIVE`                    | Automated kill process status [`True`/`False`]                           | `False`                                       |
-| `ACTION` > `AUTO_KILL` > `VERDICTS`                  | Selected verdicts to kill process automatically                          | [`malicious`]                                 |
-| `ACTION` > `AUTO_QUARANTINE` > `ACTIVE`              | Automated add quarantine status [`True`/`False`]                         | `False`                                       |
-| `ACTION` > `AUTO_QUARANTINE` > `VERDICTS`            | Selected verdicts to add quarantine automatically                        | [`malicious`]                                 |
-| `ACTION` > `AUTO_DISCONNECT` > `ACTIVE`              | Automated disconnect machine from network status [`True`/`False`]        | `False`                                       |
-| `ACTION` > `AUTO_DISCONNECT` > `VERDICTS`            | Selected verdicts to disconnect machine from network automatically       | [`malicious`]                                 |
-| `ACTION` > `AUTO_SHUTDOWN` > `ACTIVE`                | Automated shutdown machine status [`True`/`False`]                       | `False`                                       |
-| `ACTION` > `AUTO_SHUTDOWN` > `VERDICTS`              | Selected verdicts to shutdown machine automatically                      | [`malicious`]                                 |
-| `ACTION` > `AUTO_INITIATE_SCAN` > `ACTIVE`           | Automated anti virus scan status [`True`/`False`]                        | `False`                                       |
-| `ACTION` > `AUTO_INITIATE_SCAN` > `VERDICTS`         | Selected verdicts to anti virus scan automatically                       | [`malicious`]                                 |
-| `NOTE` > `SELECTED_SUBTYPES`                         | Selected subtypes to add to threat note                                  | [`verdict`,`vti`,`ioc`]                       |
-| `NOTE` > `SELECTED_IOC_FIELDS`                       | Selected ioc fields to add to threat note                                | [`md5`,`sha1`,`sha256`,`ipv4`,`domain`,`url`] |
-| `TIME_SPAN`                                          | Alert polling time span as seconds                                       | `3600`                                        |
-| `ACCOUNT_ID`                                         | SentinelOne Account ID for filtering                                     | `""`                                          |
-| `SITE_IDS`                                           | SentinelOne Site IDs for filtering                                       | `[]`                                          |
-| `SUBMISSION_CUSTOM_TAG_PROPERTY`                     | Custom tag property for VMRay submission                                 | `siteName`                                    |
-| `SELECTED_COLLECT_METHODS`                           | Methods to be used to collect samples                                    | [`threat`]                                    |
+| Configuration Item                                               | Description                                                                                                               | Default                                                         |
+|:-----------------------------------------------------------------|:--------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------------|
+| `API` > `API_TOKEN`                                              | SentinelOne API Token                                                                                                     |                                                                 |
+| `API` > `HOSTNAME_URL`                                           | Hostname to access SentinelOne                                                                                            | `https://usea1-partners.sentinelone.net`                        |
+| `API` > `API_PREFIX`                                             | API Prefix to create SentinelOne API URL                                                                                  | `web/api/v2.1`                                                  |
+| `API` > `USER_AGENT`                                             | User-Agent value to use for SentinelOne                                                                                   | `S1-VMRayAnalyzer-Connector`                                    |
+| `API` > `MAX_DATA_COUNT`                                         | Maximum data count that could be fetched in each request                                                                  | `1000`                                                          |
+| `API` > `MAX_DV_DATA_COUNT`                                      | Maximum deep visibility data count that could be fetched in each request                                                  | `20000`                                                         |
+| `API` > `FETCH_FILE_TIMEOUT`                                     | Timeout for fetching a sample file in seconds                                                                             | `60`                                                            |
+| `API` > `FETCH_FILE_TIME_SPAN`                                   | Time span for each fetched sample file in seconds                                                                         | `10`                                                            |
+| `DOWNLOAD` > `DIR`                                               | Directory name to store downloaded samples                                                                                | `downloads`                                                     |
+| `DOWNLOAD` > `EVIDENCE_DOWNLOAD_METHOD`                          | Method to be used to download samples                                                                                     | `fetch-file`                                                    |
+| `PROCESS` > `FILTER_QUERY`                                       | Filter Query to get processes                                                                                             | `ObjectType = "Process"`                                        |
+| `INDICATOR` > `NAME`                                             | Name for indicators which were created by connector                                                                       | `Indicator based on a VMRay Analyzer Report`                    |
+| `INDICATOR` > `DESCRIPTION`                                      | Description for indicators which were created by connector                                                                | `Indicator based on a VMRay Analyzer Report`                    |
+| `INDICATOR` > `SOURCE`                                           | Source for indicators which were created by connector                                                                     | `VMRay`                                                         |
+| `BLACKLIST` > `AUTO_ADD_GLOBAL` > `ACTIVE`                       | Automated add to global blacklist with SHA1 hash values [`True`/`False`]                                                  | `False`                                                         |
+| `BLACKLIST` > `AUTO_ADD_GLOBAL` > `VERDICTS`                     | Selected verdicts to add to global blacklist automatically                                                                | [`malicious`]                                                   |
+| `BLACKLIST` > `AUTO_ADD_GLOBAL` > `DESCRIPTION`                  | Description for added to global blacklist automatically                                                                   | `Reported from VMRay Analyzer`                                  |
+| `BLACKLIST` > `AUTO_ADD_THREAT` > `ACTIVE`                       | Automated add to threat blacklist with SHA1 hash values [`True`/`False`]                                                  | `False`                                                         |
+| `BLACKLIST` > `AUTO_ADD_THEAT` > `VERDICTS`                      | Selected verdicts to add to threat blacklist automatically                                                                | [`malicious`]                                                   |
+| `BLACKLIST` > `AUTO_ADD_THREAT` > `DESCRIPTION`                  | Description for added to threat blacklist automatically                                                                   | `Reported from VMRay Analyzer`                                  |
+| `BLACKLIST` > `AUTO_ADD_WITH_DV` > `ACTIVE`                      | Automated add to blacklist with SHA1 hash values [`True`/`False`]                                                         | `False`                                                         |
+| `BLACKLIST` > `AUTO_ADD_WITH_DV` > `VERDICTS`                    | Selected verdicts to add to blacklist with deep visibility automatically                                                  | [`malicious`]                                                   |
+| `ACTION` > `AUTO_KILL` > `ACTIVE`                                | Automated kill process status [`True`/`False`]                                                                            | `False`                                                         |
+| `ACTION` > `AUTO_KILL` > `VERDICTS`                              | Selected verdicts to kill process automatically                                                                           | [`malicious`]                                                   |
+| `ACTION` > `AUTO_QUARANTINE` > `ACTIVE`                          | Automated add quarantine status [`True`/`False`]                                                                          | `False`                                                         |
+| `ACTION` > `AUTO_QUARANTINE` > `VERDICTS`                        | Selected verdicts to add quarantine automatically                                                                         | [`malicious`]                                                   |
+| `ACTION` > `AUTO_DISCONNECT` > `ACTIVE`                          | Automated disconnect machine from network status [`True`/`False`]                                                         | `False`                                                         |
+| `ACTION` > `AUTO_DISCONNECT` > `VERDICTS`                        | Selected verdicts to disconnect machine from network automatically                                                        | [`malicious`]                                                   |
+| `ACTION` > `AUTO_SHUTDOWN` > `ACTIVE`                            | Automated shutdown machine status [`True`/`False`]                                                                        | `False`                                                         |
+| `ACTION` > `AUTO_SHUTDOWN` > `VERDICTS`                          | Selected verdicts to shutdown machine automatically                                                                       | [`malicious`]                                                   |
+| `ACTION` > `AUTO_INITIATE_SCAN` > `ACTIVE`                       | Automated anti virus scan status [`True`/`False`]                                                                         | `False`                                                         |
+| `ACTION` > `AUTO_INITIATE_SCAN` > `VERDICTS`                     | Selected verdicts to anti virus scan automatically                                                                        | [`malicious`]                                                   |
+| `NOTE` > `SELECTED_SUBTYPES`                                     | Selected subtypes to add to threat note                                                                                   | [`verdict`,`vti`,`ioc`]                                         |
+| `NOTE` > `SELECTED_IOC_FIELDS`                                   | Selected ioc fields to add to threat note                                                                                 | [`md5`,`sha1`,`sha256`,`ipv4`,`domain`,`url`]                   |
+| `THREAT` > `AUTO_UPDATE_FALSE_POSITIVE_VERDICT` > `ACTIVE`       | Automatic analyst verdict update as false positive for clean samples [`True`/`False`]                                     | `False`                                                         |
+| `THREAT` > `AUTO_UPDATE_FALSE_POSITIVE_VERDICT` > `VERDICTS`     | Selected verdicts to be marked as false positive automatically                                                            | [`malicious`, `suspicious`]                                     |
+| `THREAT` > `AUTO_UPDATE_FALSE_POSITIVE_VERDICT` > `DESCRIPTION`  | Threat note description to be marked as false positive automatically                                                      | `Marked as False Positive because marked as clean by VMRay`     |
+| `TIME_SPAN`                                                      | Alert polling time span as seconds                                                                                        | `3600`                                                          |
+| `ACCOUNT_ID`                                                     | SentinelOne Account ID for filtering                                                                                      | `""`                                                            |
+| `SITE_IDS`                                                       | SentinelOne Site IDs for filtering                                                                                        | `[]`                                                            |
+| `SUBMISSION_CUSTOM_TAG_PROPERTY`                                 | Custom tag property for VMRay submission                                                                                  | `siteName`                                                      |
+| `SELECTED_COLLECT_METHODS`                                       | Methods to be used to collect samples                                                                                     | [`threat`]                                                      |
+| `SELECTED_CONFIDENCE_LEVELS`                                     | Methods to be used to filter threat files by confidence levels                                                            | [`malicious`, `suspicious`, `n/a`]                              |
+
+**Note:** To download threat files from Cloud, you must have a site with Singularity™ Complete SKU. [More details](https://usea1-partners.sentinelone.net/docs/en/binary-vault.html)
 
 ## General Connector Configurations
 

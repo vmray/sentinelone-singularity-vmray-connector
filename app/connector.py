@@ -211,6 +211,16 @@ def run():
                 if sample_data["sample_verdict"] in sentinel.config.ACTION.AUTO_SHUTDOWN.VERDICTS:
                     sentinel.auto_shutdown_machine(sample["agent_id"])
 
+        # If sample identified as clean from VMRay
+        elif sample_data["sample_verdict"] == VERDICT.CLEAN:
+            # If sample marked as threat by SentinelOne and auto update verdict enabled,
+            # add a note and update analyst verdict as false positive
+            if sentinel.config.THREAT.AUTO_UPDATE_FALSE_POSITIVE_VERDICT.ACTIVE \
+            and sample["sample_type"] == SAMPLE_TYPE.THREAT \
+            and sample["confidenceLevel"] in sentinel.config.THREAT.AUTO_UPDATE_FALSE_POSITIVE_VERDICT.VERDICTS:
+                sentinel.update_analyst_verdict(sample["id"], ANALYST_VERDICTS.FALSE_POSITIVE)
+                sentinel.create_note(sample["id"], sample_data, sample_vtis={}, sample_iocs={})
+
     # Submitting downloaded samples to VMRay
     submissions = vmray.submit_samples(downloaded_samples)
 
@@ -298,6 +308,16 @@ def run():
                     if threat_sample and sample_data["sample_verdict"] in sentinel.config.ACTION.AUTO_SHUTDOWN.VERDICTS:
                         sentinel.auto_shutdown_machine(threat_sample["agent_id"])
 
+            # If sample identified as clean from VMRay
+            elif sample_data["sample_verdict"] == VERDICT.CLEAN:
+                # If sample marked as threat by SentinelOne and auto update verdict enabled,
+                # add a note and update analyst verdict as false positive
+                if sentinel.config.THREAT.AUTO_UPDATE_FALSE_POSITIVE_VERDICT.ACTIVE \
+                and sample["sample_type"] == SAMPLE_TYPE.THREAT \
+                and sample["confidenceLevel"] in sentinel.config.THREAT.AUTO_UPDATE_FALSE_POSITIVE_VERDICT.VERDICTS:
+                    sentinel.update_analyst_verdict(sample["id"], ANALYST_VERDICTS.FALSE_POSITIVE)
+                    sentinel.create_note(sample["id"], sample_data, sample_vtis={}, sample_iocs={})
+
     # Removing downloaded files
     for downloaded_evidence in downloaded_samples:
         shutil.rmtree(downloaded_evidence["download_folder_path"], ignore_errors=True)
@@ -306,7 +326,7 @@ def run():
 if __name__ == "__main__":
     from app.lib.SentinelOne import SentinelOne
     from app.lib.VMRay import VMRay
-    from app.config.conf import GeneralConfig, SentinelOneConfig, DOWNLOAD_METHODS
+    from app.config.conf import GeneralConfig, SentinelOneConfig, DOWNLOAD_METHODS, VERDICT, ANALYST_VERDICTS
     from app.config.conf import RUNTIME_MODE, SAMPLE_TYPE, MITIGATION_TYPE, COLLECT_METHODS
 
     if GeneralConfig.RUNTIME_MODE == RUNTIME_MODE.DOCKER:

@@ -18,6 +18,7 @@ class REQUEST_METHOD:
 class VERDICT:
     SUSPICIOUS = "suspicious"
     MALICIOUS = "malicious"
+    CLEAN = "clean"
 
 
 # VMRay job status
@@ -116,6 +117,19 @@ class COLLECT_METHODS:
     DEEP_VISIBILITY = "deep-visibility"
 
 
+class THREAT_CONFIDENCE_LEVELS:
+    MALICIOUS = "malicious"
+    SUSPICIOUS = "suspicious"
+    OTHERS = "n/a"
+
+
+class ANALYST_VERDICTS:
+    FALSE_POSITIVE = "false_positive"
+    TRUE_POSITIVE = "true_positive"
+    SUSPICIOUS = "suspicious"
+    UNDEFINED = "undefined"
+
+
 class DOWNLOAD_METHODS:
     CLOUD = "download-cloud"
     FETCH_FROM_AGENT = "fetch-file"
@@ -146,6 +160,9 @@ class SentinelOneConfig:
     # Methods to be used to collect samples
     SELECTED_COLLECT_METHODS = [COLLECT_METHODS.THREAT]
 
+    # Methods to be used to filter threat files by confidence levels
+    SELECTED_CONFIDENCE_LEVELS = [THREAT_CONFIDENCE_LEVELS.MALICIOUS, THREAT_CONFIDENCE_LEVELS.SUSPICIOUS, THREAT_CONFIDENCE_LEVELS.OTHERS]
+
     # API related configurations
     class API:
         # SentinelOne API, API Token
@@ -173,6 +190,10 @@ class SentinelOneConfig:
         # Max limit = 1.000
         MAX_DATA_COUNT = 1000
 
+        # Max deep visibility data count per request
+        # Max limit = 20.000
+        MAX_DV_DATA_COUNT = 20000
+
         # Fetch file timeout (seconds)
         FETCH_FILE_TIMEOUT = 60
 
@@ -188,7 +209,7 @@ class SentinelOneConfig:
         ABSOLUTE_PATH = pathlib.Path(__file__).parent.parent.resolve() / DIR
 
         # Method to be used to download samples
-        EVIDENCE_DOWNLOAD_METHOD = DOWNLOAD_METHODS.CLOUD
+        EVIDENCE_DOWNLOAD_METHOD = DOWNLOAD_METHODS.FETCH_FROM_AGENT
 
     # Process related configurations
     class PROCESS:
@@ -289,6 +310,19 @@ class SentinelOneConfig:
         # Selected ioc fields for processing
         SELECTED_IOC_FIELDS = [NOTE_IOC_FIELDS.MD5, NOTE_IOC_FIELDS.SHA1, NOTE_IOC_FIELDS.SHA256, NOTE_IOC_FIELDS.IPV4,
                                NOTE_IOC_FIELDS.DNS, NOTE_IOC_FIELDS.URL]
+
+    # Threat related configurations
+    class THREAT:
+        # Automatic analyst verdict update as False Positive for clean samples
+        class AUTO_UPDATE_FALSE_POSITIVE_VERDICT:
+            # Automated update verdict
+            ACTIVE = False
+
+            # Selected verdicts automatically update threat analyst verdict
+            VERDICTS = [THREAT_CONFIDENCE_LEVELS.MALICIOUS, THREAT_CONFIDENCE_LEVELS.SUSPICIOUS]
+
+            # Description for threat note which created by connector
+            DESCRIPTION = "Marked as False Positive because marked as clean by VMRay"
 
 
 # General Configuration
