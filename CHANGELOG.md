@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.5 - 25.07.2023]
+### Added
+- Confidence filter feature for threats
+- Deep visibility maximum count variable
+- Configurable false positive marking feature for clean samples
+- Pagination to endpoints that have a limit
+
+### Changed
+- get_sites function limit
+- Default evidence download method
+
 ## [1.4 - 05.06.2023]
 ### Added
 - Configuration parameter to resubmit a known file based on the verdict
