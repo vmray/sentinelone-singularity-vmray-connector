@@ -1,6 +1,6 @@
 # VMRay Analyzer Connector for SentinelOne
 
-**Latest Version:** 1.5 - **Release Date:** July 25, 2023
+**Latest Version:** 1.6 - **Release Date:** December 21, 2023
 
 <p align="center">
   <img src="app/imgs/vmray.png" alt="drawing" width="430"/>
@@ -52,7 +52,7 @@ The connector supports following VMRay products:
 ## Requirements
 
 - Python 3.x with required packages ([Required Packages](app/requirements.txt))
-- SentinelOne Signularity API Token
+- SentinelOne Singularity API Token
 - VMRay Analyzer API Key
 - Docker (optional)
 
@@ -110,11 +110,44 @@ After running the Docker container you can see connector logs in the log directo
 
 ## SentinelOne Configurations
 
-- Generate an API Token with web interface. (`Settings > Users > Click your username > API Token Generate`)
+- Option-1: Normal User
+  - Generate an API Token with web interface. (`Settings > Users > Click your username > API Token Generate`)
 
-- If the API Token expired, regenerate an API Token from within the web interface. (`Settings > Users > Click your username > Options > Regenerate API Token`)
+  - If the API Token expired, regenerate an API Token from within the web interface. (`Settings > Users > Click your username > Options > Regenerate API Token`)
 
-Note: API Token expiration period is 6 months. [More details](https://usea1-partners.sentinelone.net/docs/en/generating-api-tokens.html)
+  Note: API Token expiration period is 6 months. [More details](https://usea1-partners.sentinelone.net/docs/en/generating-api-tokens.html)
+
+- Option-2: Service User
+  - Create Service User and generate an API Token with web interface (`Settings > Users > Service Users > Actions > Create New Service User`)
+
+  - If the API Token expired, regenerate a Service User from within the web interface. (`Settings > Users > Service Users > Actions > Create New Service User`)
+
+* Required permissions in the role for Normal user or Service user. (`Settings > Users > Roles > Click your role`)
+
+| Category                                      | Permission Type             | Description                                                                                                                                                                   | 
+|:----------------------------------------------|:----------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Endpoint                                      | View                        | Required by default                                                                                                                                                           |
+| Endpoint                                      | View Threats                | Required by default                                                                                                                                                           |
+| Endpoint                                      | Shut Down                   | Required if `ACTION` > `AUTO_SHUTDOWN` > `ACTIVE` configuration is Enabled                                                                                                    |
+| Endpoint                                      | Search on Deep Visibility   | Required if `SELECTED_COLLECT_METHODS` > `deep-visibility` configuration is Enabled                                                                                           |
+| Endpoint                                      | Initiate Scan               | Required if `ACTION` > `AUTO_INITIATE_SCAN` > `ACTIVE` configuration is Enabled                                                                                               |
+| Endpoint                                      | File Fetch                  | Required if `SELECTED_COLLECT_METHODS` > `deep-visibility` configuration is Enabled                                                                                           |
+| Endpoint                                      | Disconnect From Network     | Required if `ACTION` > `AUTO_DISCONNECT` > `ACTIVE` configuration is Enabled                                                                                                  |
+| Endpoint Threats                              | View                        | Required by default                                                                                                                                                           |
+| Endpoint Threats                              | Update Analyst Verdict      | Required if `THREAT` > `AUTO_UPDATE_FALSE_POSITIVE_VERDICT` > `ACTIVE` configuration is Enabled                                                                               |
+| Endpoint Threats                              | Threat Actions > Quarantine | Required if `ACTION` > `AUTO_QUARANTINE` > `ACTIVE` configuration is Enabled                                                                                                  |
+| Endpoint Threats                              | Threat Actions > Kill       | Required if `ACTION` > `AUTO_KILL` > `ACTIVE` configuration is Enabled                                                                                                        |
+| Endpoint Threats                              | Fetch Threat File           | Required by default                                                                                                                                                           |
+| Account                                       | View                        | Required by default                                                                                                                                                           |
+| Activity                                      | View                        | Required by default                                                                                                                                                           |
+| Blocklist                                     | View                        | Required if `BLACKLIST` > `AUTO_ADD_GLOBAL` > `ACTIVE`                                                                                                                        |
+| Blocklist                                     | Create                      | Required if `BLACKLIST` > `AUTO_ADD_GLOBAL` > `ACTIVE`, `BLACKLIST` > `AUTO_ADD_THREAT` > `ACTIVE`, `BLACKLIST` > `AUTO_ADD_WITH_DV` > `ACTIVE` any  configuration is Enabled |
+| SDL Search (Previously Skylight)              | View                        | Required if `SELECTED_COLLECT_METHODS` > `deep-visibility` configuration is Enabled                                                                                           |
+| SDL Search (Previously Skylight)              | File Fetch                  | Required if `SELECTED_COLLECT_METHODS` > `deep-visibility` configuration is Enabled                                                                                           |
+| SDL Search (Previously Skylight)              | Create                      | Required if `SELECTED_COLLECT_METHODS` > `deep-visibility` configuration is Enabled                                                                                           |
+| Sites                                         | View                        | Required by default                                                                                                                                                           |
+| Threat Intelligence                           | View                        | Required by default                                                                                                                                                           |
+| Threat Intelligence                           | Manage                      | Required by default                                                                                                                                                           |
 
 - Edit the 'SentinelOneConfig' class in [conf.py](app/config/conf.py) file.
 
