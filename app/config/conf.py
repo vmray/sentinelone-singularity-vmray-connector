@@ -316,7 +316,7 @@ class SentinelOneConfig:
         # Automatic analyst verdict update as False Positive for clean samples
         class AUTO_UPDATE_FALSE_POSITIVE_VERDICT:
             # Automated update verdict
-            ACTIVE = False
+            ACTIVE = True
 
             # Selected verdicts automatically update threat analyst verdict
             VERDICTS = [THREAT_CONFIDENCE_LEVELS.MALICIOUS, THREAT_CONFIDENCE_LEVELS.SUSPICIOUS]

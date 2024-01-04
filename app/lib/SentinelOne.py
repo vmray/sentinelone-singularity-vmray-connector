@@ -39,24 +39,23 @@ class SentinelOne:
         :return: void
         """
 
-        # defining request body with user api token
-        body = {
-            "data": {
-                "apiToken": self.config.API.API_TOKEN,
-                "reason": self.config.API.USER_AGENT
-            }
+        # defining request headers with user api token
+        headers = {
+            "Authorization": "ApiToken %s" % self.config.API.API_TOKEN,
+            "User-Agent": self.config.API.USER_AGENT
         }
 
         # posting defined request data to retrieve access token
         try:
-            response = requests.post(url=self.config.API.AUTH_URL, json=body)
+            response = requests.get(url=self.config.API.URL + '/accounts', headers=headers)
             if response.status_code != 200:
+                json_response = json.loads(response.content)
+                if "errors" in json_response:
+                    for error in json_response["errors"]:
+                        self.log.error("Authentication failed - Error: %s. %s" % (error["title"], error["detail"]))
                 raise Exception("Authentication failed to SentinelOne")
 
-            self.headers = {
-                "Authorization": "ApiToken %s" % self.config.API.API_TOKEN,
-                "User-Agent": self.config.API.USER_AGENT
-            }
+            self.headers = headers
             self.log.debug("Successfully authenticated the SentinelOne")
         except Exception as err:
             self.log.error(err)

@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.6 - 21.12.2023]
+### Added
+- Added support for Service User
+- Added documentation for Service User
+- Added documentation for required permissions in the role for Normal user or Service user
+
+### Changed
+- Automatic add note and update verdict for case sample was marked as Clean by VMRay
+
 ## [1.5 - 25.07.2023]
 ### Added
 - Confidence filter feature for threats
