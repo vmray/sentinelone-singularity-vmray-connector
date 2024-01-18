@@ -139,8 +139,11 @@ def run():
     found_samples = {**found_processes, **found_evidences}
     downloaded_samples = downloaded_evidences + downloaded_processes
 
-    # Retrieving indicators from SentinelOne to check duplicates
-    old_indicators = sentinel.get_indicators()
+    old_indicators = set()
+    # If Indicator active automatic get active IOCs
+    if SentinelOneConfig.INDICATOR.ACTIVE:
+        # Retrieving indicators from SentinelOne to check duplicates
+        old_indicators = sentinel.get_indicators()
 
     # Retrieving indicators from VMRay Analyzer for found evidences
     for found_sample in found_samples.values():
@@ -158,11 +161,13 @@ def run():
             sample_iocs = vmray.get_sample_iocs(sample_data)
             ioc_data = vmray.parse_sample_iocs(sample_iocs)
 
-            # Creating SentinelOne IOC objects for IOC values
-            indicator_objects = sentinel.create_indicator_objects(ioc_data, old_indicators, sample_data)
+            # If Indicator active automatic add new IOCs
+            if SentinelOneConfig.INDICATOR.ACTIVE:
+                # Creating SentinelOne IOC objects for IOC values
+                indicator_objects = sentinel.create_indicator_objects(ioc_data, old_indicators, sample_data)
 
-            # Submitting new indicators to SentinelOne
-            sentinel.submit_indicators(indicator_objects)
+                # Submitting new indicators to SentinelOne
+                sentinel.submit_indicators(indicator_objects)
 
             # If sample marked as threat by SentinelOne, add a note with vtis and sample metadata
             if sample["sample_type"] == SAMPLE_TYPE.THREAT:
@@ -248,11 +253,13 @@ def run():
                 sample_iocs = vmray.get_sample_iocs(sample_data)
                 ioc_data = vmray.parse_sample_iocs(sample_iocs)
 
-                # Creating SentinelOne IOC objects for IOC values
-                indicator_objects = sentinel.create_indicator_objects(ioc_data, old_indicators, sample_data)
+                # If Indicator active automatic add new IOCs
+                if SentinelOneConfig.INDICATOR.ACTIVE:
+                    # Creating SentinelOne IOC objects for IOC values
+                    indicator_objects = sentinel.create_indicator_objects(ioc_data, old_indicators, sample_data)
 
-                # Submitting new indicators to SentinelOne
-                sentinel.submit_indicators(indicator_objects)
+                    # Submitting new indicators to SentinelOne
+                    sentinel.submit_indicators(indicator_objects)
 
                 # Getting sample object from evidence list or process list
                 threat_sample = None
