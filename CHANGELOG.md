@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.7 - 18.01.2024]
+### Added
+- Configuration parameter to add automatic ioc
+
 ## [1.6 - 21.12.2023]
 ### Added
 - Added support for Service User

@@ -219,6 +219,9 @@ class SentinelOneConfig:
     # Indicator related configurations
     # https://usea1-partners.sentinelone.net/docs/en/indicators.html
     class INDICATOR:
+        # Automated add to indicators which were created by connector
+        ACTIVE = False
+
         # Title for indicators which created by connector
         NAME = "Indicator based on a VMRay Analyzer Report"
 
