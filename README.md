@@ -11,6 +11,8 @@
     
 ## Overview
 
+This version is **DEPRECATED**. We recommend using instead the SentinelOne integration hosted by VMRay available with FinalVerdict or TotalInsight products.
+
 This project aims to integrate SentinelOne Singularity XDR and VMRay Analyzer to enrich incidents and provide intel on detected threats. The connector collects threats and processes files, and query or submit these samples into VMRay Analyzer. After the submission, and following detonation it retrieves back:
 
  - Threat Classification
